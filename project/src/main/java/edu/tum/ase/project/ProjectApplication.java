@@ -33,7 +33,7 @@ public class ProjectApplication implements CommandLineRunner {
 		log.info("ID of saved project = " + project.getId());
 		Project p = projectService.findByName("my-project");
 		log.info("ID of queried project = " + p.getId());
-		List<Project> projects = projectService.getProjects();
+		List<Project> projects = projectService.getAllProject();
 		log.info("Length of project list = " + projects.size());
 	}
 }
