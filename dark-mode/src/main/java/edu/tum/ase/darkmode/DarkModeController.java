@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @RestController
+@RequestMapping(path = "/dark-mode")
 public class DarkModeController {
 
     /**
@@ -19,7 +20,7 @@ public class DarkModeController {
     // TODO: Replace this with the Hibernate version of the class (exercise sheet 4)
     private final DarkMode darkMode = new DarkMode();
 
-    @RequestMapping(path = "/dark-mode/toggle", method = RequestMethod.GET)
+    @RequestMapping(path = "/toggle", method = RequestMethod.GET)
     public DarkMode toggleDarkMode() {
         long difference = ChronoUnit.SECONDS.between(darkMode.getUpdated(), LocalDateTime.now());
         if (difference > COOL_DOWN_TIME) {
@@ -31,7 +32,7 @@ public class DarkModeController {
         return darkMode;
     }
 
-    @RequestMapping(path = "/dark-mode", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public DarkMode getModeStatus() {
         return darkMode;
     }
