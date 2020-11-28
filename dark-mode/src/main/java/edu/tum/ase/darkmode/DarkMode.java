@@ -1,4 +1,4 @@
-package edu.tum.ase.darkmode.model;
+package edu.tum.ase.darkmode;
 
 import java.time.LocalDateTime;
 

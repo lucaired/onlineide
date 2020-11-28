@@ -1,8 +1,5 @@
 package edu.tum.ase.darkmode;
 
-import edu.tum.ase.darkmode.model.DarkMode;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,9 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-@SpringBootApplication
 @RestController
-public class DarkmodeApplication {
+public class DarkModeController {
 
     /**
      * Number of seconds that must pass after switching the mode before the next toggle.
@@ -21,11 +17,7 @@ public class DarkmodeApplication {
     private static final int COOL_DOWN_TIME = 3;
 
     // TODO: Replace this with the Hibernate version of the class (exercise sheet 4)
-    private DarkMode darkMode = new DarkMode();
-
-    public static void main(String[] args) {
-        SpringApplication.run(DarkmodeApplication.class, args);
-    }
+    private final DarkMode darkMode = new DarkMode();
 
     @RequestMapping(path = "/dark-mode/toggle", method = RequestMethod.GET)
     public DarkMode toggleDarkMode() {
@@ -43,4 +35,5 @@ public class DarkmodeApplication {
     public DarkMode getModeStatus() {
         return darkMode;
     }
+
 }
