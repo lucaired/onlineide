@@ -17,7 +17,6 @@ public class DarkModeController {
      */
     private static final int COOL_DOWN_TIME = 3;
 
-    // TODO: Replace this with the Hibernate version of the class (exercise sheet 4)
     private final DarkMode darkMode = new DarkMode();
 
     @RequestMapping(path = "/toggle", method = RequestMethod.GET)

@@ -6,7 +6,6 @@ public class DarkMode {
 
     private boolean enabled;
 
-    // TODO: This can probably be set automatically by the database when changes are made (exercise sheet 4)
     private LocalDateTime updated;
 
     public DarkMode() {

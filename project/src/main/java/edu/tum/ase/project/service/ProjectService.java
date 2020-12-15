@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectService {
@@ -16,12 +17,23 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public Project findByName(String name) {
+    public Project updateProject(Project project) {
+        return projectRepository.save(project);
+    }
+
+    public Optional<Project> findByName(String name) {
         return projectRepository.findByName(name);
     }
 
+    public Optional<Project> findById(String id) {
+        return projectRepository.findById(id);
+    }
 
-    public List<Project> getAllProject() {
+    public List<Project> getAllProjects() {
         return projectRepository.findAll();
+    }
+
+    public void deleteById(String id) {
+        projectRepository.deleteById(id);
     }
 }
