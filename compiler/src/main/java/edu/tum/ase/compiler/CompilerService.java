@@ -52,7 +52,7 @@ public class CompilerService {
         String stdout = convertToString(p.getInputStream());
         sourceCode.setStdout(stdout);
 
-        sourceCode.setCompilable(stderr.equals(""));
+        sourceCode.setCompilable(stderr.isBlank());
 
         // TODO: Delete the temporary file (and parent folder) after the compilation?
 
