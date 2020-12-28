@@ -23,23 +23,26 @@ import static org.mockito.BDDMockito.given;
 @RunWith(SpringRunner.class)
 public class CompilerServiceTest {
 
-    Runtime runtime = Mockito.mock(Runtime.class);
-
-    Process p = Mockito.mock(Process.class);
-
     // TODO: File is still written to filesystem because this is done in the constructor -> Fix that
     FileWriter fileWriter = Mockito.mock(FileWriter.class);
 
     @Autowired
     private CompilerService systemUnderTest;
 
-    public void stubRuntimeExec(String stdErr) throws IOException {
+    private void stubRuntimeExec(String stdErr) throws IOException {
         InputStream errorStream = new ByteArrayInputStream(stdErr.getBytes());
         InputStream outputStream = new ByteArrayInputStream("".getBytes());
 
-        given(p.getErrorStream()).willReturn(errorStream);
-        given(p.getInputStream()).willReturn(outputStream);
-        given(runtime.exec(anyString())).willReturn(p);
+        Process processMock = Mockito.mock(Process.class);
+        given(processMock.getErrorStream()).willReturn(errorStream);
+        given(processMock.getInputStream()).willReturn(outputStream);
+
+        Runtime runtimeMock = Mockito.mock(Runtime.class);
+        given(runtimeMock.exec(anyString())).willReturn(processMock);
+
+        // This specifies that in the class under test the created mock is used as Runtime object.
+        // Its exec() method in turn returns a mock for Process that reflects the behavior to be tested (see above).
+        given(systemUnderTest.getRuntime()).willReturn(runtimeMock);
     }
 
     /**
@@ -142,7 +145,10 @@ public class CompilerServiceTest {
 
         @Bean
         public CompilerService systemUnderTest() {
-            return new CompilerService();
+            // Create a Mockito spy from the actual object to be able to stub certain methods.
+            // Spies call the real methods of the used object instance by default, as long as they have not been explicitly
+            // overridden with stubs (see https://www.baeldung.com/mockito-spy#mock-vs-spy-in-mockito).
+            return Mockito.spy(new CompilerService());
         }
     }
 }
