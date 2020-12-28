@@ -29,4 +29,10 @@ public class SourceCode {
     private String stdout;
     private String stderr;
     private boolean compilable = false;
+
+    public SourceCode(String fileName, String language, String code) {
+        this.code = code;
+        this.fileName = fileName;
+        this.language = language;
+    }
 }

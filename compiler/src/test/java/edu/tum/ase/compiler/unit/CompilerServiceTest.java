@@ -1,15 +1,12 @@
 package edu.tum.ase.compiler.unit;
 
-import edu.tum.ase.compiler.CompilerController;
 import edu.tum.ase.compiler.CompilerService;
 import edu.tum.ase.compiler.SourceCode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -19,131 +16,124 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-//import static org.assertj.core.api.BDDAssertions.then;
-import static org.mockito.Mockito.doNothing;
 
 @RunWith(SpringRunner.class)
 public class CompilerServiceTest {
-
-    @Autowired
-    private CompilerService systemUnderTest;
-
-    // possible dependecies to mock: File, FileWriter, Runtime
-    //TODO: mock Filewriter
 
     Runtime runtime = Mockito.mock(Runtime.class);
 
     Process p = Mockito.mock(Process.class);
 
-    // fileWriter.write returns void therefore we don't need to mock it.
+    // TODO: File is still written to filesystem because this is done in the constructor -> Fix that
     FileWriter fileWriter = Mockito.mock(FileWriter.class);
 
-    // TODO: File is still written to filesystem because this is done in the constructor -> Fix that
+    @Autowired
+    private CompilerService systemUnderTest;
 
-    public void mockRuntimeExec(String stdErr, String stdOut) throws IOException {
+    public void stubRuntimeExec(String stdErr) throws IOException {
         InputStream errorStream = new ByteArrayInputStream(stdErr.getBytes());
-        InputStream outputStream = new ByteArrayInputStream(stdOut.getBytes());
+        InputStream outputStream = new ByteArrayInputStream("".getBytes());
 
         given(p.getErrorStream()).willReturn(errorStream);
         given(p.getInputStream()).willReturn(outputStream);
         given(runtime.exec(anyString())).willReturn(p);
     }
 
-    @Test
-    public void should_ReturnIsCompilable_When_ValidSourcecodeObject() throws IOException {
-        // given
-        SourceCode sourceCode = new SourceCode();
+    /**
+     * Utility function to generate a {@link SourceCode}
+     *
+     * @return
+     */
+    private SourceCode createValidJavaSourceCode() {
         String code = "public class App{public static void main(String[] args) {System.out.println(\"Hello World!\");}}";
         String filename = "App.java";
         String language = "Java";
-        sourceCode.setCode(code);
-        sourceCode.setFileName(filename);
-        sourceCode.setLanguage(language);
-        mockRuntimeExec("", "");
+        return new SourceCode(filename, language, code);
+    }
+
+    /**
+     * Utility function to compare the attribute values of {@link SourceCode} objects that are set before running compiler functions.
+     *
+     * @param a - First {@link SourceCode} object
+     * @param b - Second {@link SourceCode} object
+     */
+    private void assertAttributesAreUnchanged(SourceCode a, SourceCode b) {
+        boolean unchanged = a.getCode().equals(b.getCode()) &&
+                a.getFileName().equals(b.getFileName()) &&
+                a.getLanguage().equals(b.getLanguage());
+        assertTrue(unchanged);
+    }
+
+    @Test
+    public void should_ReturnIsCompilable_When_ValidSourcecodeObject() throws IOException {
+        // given
+        SourceCode sourceCode = createValidJavaSourceCode();
+        stubRuntimeExec("");
 
         // when
         SourceCode result = systemUnderTest.compile(sourceCode);
 
         // then
-        then(result.isCompilable());
-        then(result.getStderr()).equals("");
-        then(result.getStdout()).equals("");
-        then(result.getCode()).equals(code);
-        then(result.getFileName()).equals(filename);
-        then(result.getLanguage()).equals(language);
+        assertTrue(result.isCompilable());
+        assertEquals("", result.getStderr());
+        assertEquals("", result.getStdout());
+        assertAttributesAreUnchanged(result, sourceCode);
     }
 
     @Test
     public void should_ReturnNotCompilable_When_NotValidSourcecodeObject() throws IOException {
-        SourceCode sourceCode = new SourceCode();
-        String code = "This is not valid c code.";
+        // given
+        String code = "This is not valid C code.";
         String filename = "App.c";
         String language = "C";
         String errorMessage = "There is an error";
-        sourceCode.setCode(code);
-        sourceCode.setFileName(filename);
-        sourceCode.setLanguage(language);
-        mockRuntimeExec(errorMessage, "");
+        SourceCode sourceCode = new SourceCode(filename, language, code);
+        stubRuntimeExec(errorMessage);
 
         // when
         SourceCode result = systemUnderTest.compile(sourceCode);
 
         // then
-        then(!result.isCompilable());
-        then(result.getStderr()).equals(errorMessage);
-        then(result.getStdout()).equals("");
-        then(result.getCode()).equals(code);
-        then(result.getFileName()).equals(filename);
-        then(result.getLanguage()).equals(language);
+        assertFalse(result.isCompilable());
+        assertEquals(errorMessage, result.getStderr());
+        assertEquals("", result.getStdout());
+        assertAttributesAreUnchanged(result, sourceCode);
     }
 
     @Test
     public void should_ThrowException_When_LanguageIsInvalid() throws IOException {
         // given
-        SourceCode sourceCode = new SourceCode();
-        sourceCode.setFileName("App.py");
-        sourceCode.setLanguage("python");
-        sourceCode.setCode("code");
-        mockRuntimeExec("", "");
+        SourceCode sourceCode = new SourceCode("App.py", "python", "code");
+        stubRuntimeExec("");
 
         // when
-        try{
-            SourceCode result = systemUnderTest.compile(sourceCode);
+        try {
+            systemUnderTest.compile(sourceCode);
             fail("Exception should be thrown by the function");
-        } catch (Exception e){
+        } catch (Exception e) {
             // then
             assertThat(e, instanceOf(IllegalArgumentException.class));
+            assertEquals("'python' is not supported", e.getMessage());
         }
     }
 
     @Test
     public void should_ReturnCompilable_When_StdErrContainsWhitespaces() throws IOException {
         // given
-        SourceCode sourceCode = new SourceCode();
-        String code = "public class App{public static void main(String[] args) {System.out.println(\"Hello World!\");}}";
-        String filename = "App.java";
-        String language = "Java";
-        sourceCode.setCode(code);
-        sourceCode.setFileName(filename);
-        sourceCode.setLanguage(language);
-        //TODO
-        mockRuntimeExec("  g ", "");
+        SourceCode sourceCode = createValidJavaSourceCode();
+        stubRuntimeExec("   ");
 
         // when
         SourceCode result = systemUnderTest.compile(sourceCode);
 
         // then
-        then(result.isCompilable());
-        then(result.getStderr()).equals("");
-        then(result.getStdout()).equals("");
-        then(result.getCode()).equals(code);
-        then(result.getFileName()).equals(filename);
-        then(result.getLanguage()).equals(language);
+        assertTrue(result.isCompilable());
+        assertEquals("   ", result.getStderr());
+        assertEquals("", result.getStdout());
+        assertAttributesAreUnchanged(result, sourceCode);
     }
 
 
@@ -155,10 +145,4 @@ public class CompilerServiceTest {
             return new CompilerService();
         }
     }
-
-    // TODO:
-
-
-    // If Runtime returns only whitespaces we should assume that it was successful
-
 }
