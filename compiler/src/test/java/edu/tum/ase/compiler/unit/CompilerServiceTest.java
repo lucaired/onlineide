@@ -100,6 +100,22 @@ public class CompilerServiceTest {
     }
 
     @Test
+    public void should_ReturnIsCompilable_When_StdErrContainsWhitespaces() throws IOException {
+        // given
+        SourceCode sourceCode = createValidJavaSourceCode();
+        stubRuntimeExec("   ");
+
+        // when
+        SourceCode result = systemUnderTest.compile(sourceCode);
+
+        // then
+        assertTrue(result.isCompilable());
+        assertEquals("   ", result.getStderr());
+        assertEquals("", result.getStdout());
+        assertAttributesAreUnchanged(result, sourceCode);
+    }
+
+    @Test
     public void should_ReturnNotCompilable_When_NotValidSourcecodeObject() throws IOException {
         // given
         String code = "This is not valid C code.";
@@ -174,23 +190,6 @@ public class CompilerServiceTest {
             assertTrue(e.getMessage().startsWith("Could not execute the compilation command"));
         }
     }
-
-    @Test
-    public void should_ReturnCompilable_When_StdErrContainsWhitespaces() throws IOException {
-        // given
-        SourceCode sourceCode = createValidJavaSourceCode();
-        stubRuntimeExec("   ");
-
-        // when
-        SourceCode result = systemUnderTest.compile(sourceCode);
-
-        // then
-        assertTrue(result.isCompilable());
-        assertEquals("   ", result.getStderr());
-        assertEquals("", result.getStdout());
-        assertAttributesAreUnchanged(result, sourceCode);
-    }
-
 
     @TestConfiguration
     static class CompilerServiceTestsConfiguration {
