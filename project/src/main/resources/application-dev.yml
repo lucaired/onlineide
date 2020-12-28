@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:onlineide_dev_db
+    username: admin
+    password: test
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+server:
+  port: 8080

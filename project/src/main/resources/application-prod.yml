@@ -1,0 +1,24 @@
+#override the application.properties file in exercise sheet 4
+
+# --spring.profiles.active=(dev or prod)  --DB_USER=DATABASE_USERNAME  --DB_PASSWORD=DATABASE_PASSWORD
+# --DB_TYPE=THE_TYPE_OF_DB --DB_HOST=HOST_IP --DB_PORT=PORT_OF_DB --DB_NAME=NAME_OF_DB
+
+# e.g. for docker-compose.yml
+# --spring.profiles.active=prod  --DB_USER=admin  --DB_PASSWORD=test --DB_TYPE=postgresql --DB_HOST=localhost --DB_PORT=5432 --DB_NAME=my_db
+
+spring:
+  datasource:
+    password: ${DB_PASSWORD}
+    url: jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+server:
+  port: 8080
