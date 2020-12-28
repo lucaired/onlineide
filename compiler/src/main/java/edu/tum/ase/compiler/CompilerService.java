@@ -38,7 +38,8 @@ public class CompilerService {
 
     public SourceCode compile(SourceCode sourceCode) {
 
-        File file = new File(Files.createTempDir(), sourceCode.getFileName());
+        File tempDir = Files.createTempDir();
+        File file = new File(tempDir, sourceCode.getFileName());
         try {
             FileWriter writer = makeWriter(file);
             writer.write(sourceCode.getCode());
@@ -47,10 +48,14 @@ public class CompilerService {
             throw new RuntimeException("Could not write temporary file used for compilation: " + file.getPath());
         }
 
-        String cmd = getCompileCommand(sourceCode.getLanguage(), file.getPath());
+        // Build a shell command not only consisting of the actual compiler command, but change into the created temporary directory first.
+        // This is necessary (at least for gcc) so that the compiled file is not created in the current working directory, but in the temporary folder.
+        String cmd = "cd " + tempDir + " && " + getCompileCommand(sourceCode.getLanguage(), sourceCode.getFileName());
         Process p;
         try {
-            p = getRuntime().exec(cmd);
+            // Since several commands are concatenated (&&) this explicit command structure is necessary when calling exec().
+            String[] commands = {"/bin/bash", "-c", cmd};
+            p = getRuntime().exec(commands);
         } catch (IOException e) {
             throw new RuntimeException("Could not execute the compilation command: " + cmd);
         }

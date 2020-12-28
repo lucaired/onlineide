@@ -35,7 +35,7 @@ public class CompilerServiceTest {
         given(processMock.getInputStream()).willReturn(outputStream);
 
         Runtime runtimeMock = Mockito.mock(Runtime.class);
-        given(runtimeMock.exec(anyString())).willReturn(processMock);
+        given(runtimeMock.exec(Mockito.any(String[].class))).willReturn(processMock);
 
         // This specifies that in the class under test the created mock is used as Runtime object.
         // Its exec() method in turn returns a mock for Process that reflects the behavior to be tested (see above).
@@ -177,7 +177,7 @@ public class CompilerServiceTest {
         // given
         SourceCode sourceCode = createValidJavaSourceCode();
         Runtime runtimeMock = mock(Runtime.class);
-        given(runtimeMock.exec(anyString())).willThrow(IOException.class);
+        given(runtimeMock.exec(Mockito.any(String[].class))).willThrow(IOException.class);
         given(systemUnderTest.getRuntime()).willReturn(runtimeMock);
 
         // when
