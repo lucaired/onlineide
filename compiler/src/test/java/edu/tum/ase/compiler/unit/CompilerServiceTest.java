@@ -18,8 +18,7 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 public class CompilerServiceTest {
@@ -134,6 +133,45 @@ public class CompilerServiceTest {
             // then
             assertThat(e, instanceOf(IllegalArgumentException.class));
             assertEquals("'python' is not supported", e.getMessage());
+        }
+    }
+
+    @Test
+    public void should_ThrowException_When_TempFileNotWritable() throws IOException {
+        // given
+        SourceCode sourceCode = createValidJavaSourceCode();
+        FileWriter writerMock = Mockito.mock(FileWriter.class);
+        doThrow(IOException.class).when(writerMock).write(anyString());
+        doReturn(writerMock).when(systemUnderTest).makeWriter(any(File.class));
+
+        // when
+        try {
+            systemUnderTest.compile(sourceCode);
+            fail("Exception should be thrown by the function");
+        } catch (Exception e) {
+            // then
+            assertThat(e, instanceOf(RuntimeException.class));
+            assertTrue(e.getMessage().startsWith("Could not write temporary file used for compilation"));
+        }
+    }
+
+
+    @Test
+    public void should_ThrowException_When_CmdExecutionFailed() throws IOException {
+        // given
+        SourceCode sourceCode = createValidJavaSourceCode();
+        Runtime runtimeMock = mock(Runtime.class);
+        given(runtimeMock.exec(anyString())).willThrow(IOException.class);
+        given(systemUnderTest.getRuntime()).willReturn(runtimeMock);
+
+        // when
+        try {
+            systemUnderTest.compile(sourceCode);
+            fail("Exception should be thrown by the function");
+        } catch (Exception e) {
+            // then
+            assertThat(e, instanceOf(RuntimeException.class));
+            assertTrue(e.getMessage().startsWith("Could not execute the compilation command"));
         }
     }
 
