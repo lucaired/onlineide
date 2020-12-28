@@ -28,11 +28,19 @@ public class CompilerService {
         }
     }
 
+    public Runtime getRuntime() {
+        return Runtime.getRuntime();
+    }
+
+    public FileWriter makeWriter(File f) throws IOException {
+        return new FileWriter(f);
+    }
+
     public SourceCode compile(SourceCode sourceCode) {
 
         File file = new File(Files.createTempDir(), sourceCode.getFileName());
         try {
-            FileWriter writer = new FileWriter(file);
+            FileWriter writer = makeWriter(file);
             writer.write(sourceCode.getCode());
             writer.close();
         } catch (IOException ex) {
@@ -42,7 +50,7 @@ public class CompilerService {
         String cmd = getCompileCommand(sourceCode.getLanguage(), file.getPath());
         Process p;
         try {
-            p = Runtime.getRuntime().exec(cmd);
+            p = getRuntime().exec(cmd);
         } catch (IOException e) {
             throw new RuntimeException("Could not execute the compilation command: " + cmd);
         }
