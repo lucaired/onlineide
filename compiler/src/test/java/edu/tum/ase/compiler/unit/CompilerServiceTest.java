@@ -2,6 +2,7 @@ package edu.tum.ase.compiler.unit;
 
 import edu.tum.ase.compiler.CompilerService;
 import edu.tum.ase.compiler.SourceCode;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -10,21 +11,18 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 
 @RunWith(SpringRunner.class)
 public class CompilerServiceTest {
-
-    // TODO: File is still written to filesystem because this is done in the constructor -> Fix that
-    FileWriter fileWriter = Mockito.mock(FileWriter.class);
 
     @Autowired
     private CompilerService systemUnderTest;
@@ -44,6 +42,17 @@ public class CompilerServiceTest {
         // Its exec() method in turn returns a mock for Process that reflects the behavior to be tested (see above).
         given(systemUnderTest.getRuntime()).willReturn(runtimeMock);
     }
+
+    private void stubFileWriter() throws IOException {
+        FileWriter writerMock = Mockito.mock(FileWriter.class);
+        // This stub definition is not explicitly necessary because mocks use doNothing() for void methods by default. However, it makes our intention clearer.
+        doNothing().when(writerMock).write(anyString());
+
+        // In this case it is necessary to use the doReturn() notation (unlike, for example, given() or when()).
+        // Otherwise a NullPointerException may occur because the stubbed method is initially called with a null object.
+        doReturn(writerMock).when(systemUnderTest).makeWriter(any(File.class));
+    }
+
 
     /**
      * Utility function to generate a {@link SourceCode}
@@ -68,6 +77,11 @@ public class CompilerServiceTest {
                 a.getFileName().equals(b.getFileName()) &&
                 a.getLanguage().equals(b.getLanguage());
         assertTrue(unchanged);
+    }
+
+    @Before
+    public void init() throws IOException {
+        stubFileWriter();
     }
 
     @Test
