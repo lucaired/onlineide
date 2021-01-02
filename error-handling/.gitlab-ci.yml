@@ -1,0 +1,9 @@
+package-error-handling:
+  stage: package-dependencies
+  script:
+    - cd error-handling
+    - mvn $MAVEN_CLI_OPTS package
+    - mvn $MAVEN_CLI_OPTS install:install-file -Dfile=target/error-handling-0.0.1-SNAPSHOT.jar -DgroupId=edu.tum.ase -DartifactId=error-handling -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+  artifacts:
+    paths:
+      - error-handling/target/*.jar
