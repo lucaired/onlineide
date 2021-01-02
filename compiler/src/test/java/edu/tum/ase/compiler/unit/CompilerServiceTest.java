@@ -2,25 +2,24 @@ package edu.tum.ase.compiler.unit;
 
 import edu.tum.ase.compiler.CompilerService;
 import edu.tum.ase.compiler.SourceCode;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.*;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class CompilerServiceTest {
 
     @Autowired
@@ -78,7 +77,7 @@ public class CompilerServiceTest {
         assertTrue(unchanged);
     }
 
-    @Before
+    @BeforeEach
     public void init() throws IOException {
         stubFileWriter();
     }
@@ -141,15 +140,9 @@ public class CompilerServiceTest {
         SourceCode sourceCode = new SourceCode("App.py", "python", "code");
         stubRuntimeExec("");
 
-        // when
-        try {
-            systemUnderTest.compile(sourceCode);
-            fail("Exception should be thrown by the function");
-        } catch (Exception e) {
-            // then
-            assertThat(e, instanceOf(IllegalArgumentException.class));
-            assertEquals("'python' is not supported", e.getMessage());
-        }
+        // when + then
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> systemUnderTest.compile(sourceCode));
+        assertEquals("'python' is not supported", exception.getMessage());
     }
 
     @Test
@@ -160,15 +153,9 @@ public class CompilerServiceTest {
         doThrow(IOException.class).when(writerMock).write(anyString());
         doReturn(writerMock).when(systemUnderTest).makeWriter(any(File.class));
 
-        // when
-        try {
-            systemUnderTest.compile(sourceCode);
-            fail("Exception should be thrown by the function");
-        } catch (Exception e) {
-            // then
-            assertThat(e, instanceOf(RuntimeException.class));
-            assertTrue(e.getMessage().startsWith("Could not write temporary file used for compilation"));
-        }
+        // when + then
+        Throwable exception = assertThrows(RuntimeException.class, () -> systemUnderTest.compile(sourceCode));
+        assertTrue(exception.getMessage().startsWith("Could not write temporary file used for compilation"));
     }
 
 
@@ -180,15 +167,9 @@ public class CompilerServiceTest {
         given(runtimeMock.exec(Mockito.any(String[].class))).willThrow(IOException.class);
         given(systemUnderTest.getRuntime()).willReturn(runtimeMock);
 
-        // when
-        try {
-            systemUnderTest.compile(sourceCode);
-            fail("Exception should be thrown by the function");
-        } catch (Exception e) {
-            // then
-            assertThat(e, instanceOf(RuntimeException.class));
-            assertTrue(e.getMessage().startsWith("Could not execute the compilation command"));
-        }
+        // when + then
+        Throwable exception = assertThrows(RuntimeException.class, () -> systemUnderTest.compile(sourceCode));
+        assertTrue(exception.getMessage().startsWith("Could not execute the compilation command"));
     }
 
     @TestConfiguration
