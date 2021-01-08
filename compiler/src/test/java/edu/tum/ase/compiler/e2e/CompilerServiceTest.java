@@ -16,6 +16,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+// The @AutoConfigureMockMvc annotation is important for E2E testing:
+// That way, almost of the full stack is used, so that the code will be called in exactly the same way as if it were processing a real HTTP request but without the cost of starting the server.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
