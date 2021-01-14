@@ -25,7 +25,8 @@ stages:
   script:
     - cd $MICROSERVICE_DIR
     - mvn $MAVEN_CLI_OPTS clean compile
-  needs: [ "package-error-handling" ]
+  needs:
+    - package-error-handling
 
 .template-package:
   stage: package

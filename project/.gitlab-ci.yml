@@ -8,3 +8,5 @@ build-project:
 
 package-project:
   extends: .template-package
+  needs:
+    - build-project

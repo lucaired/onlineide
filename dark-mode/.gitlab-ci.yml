@@ -8,3 +8,5 @@ build-dark-mode:
 
 package-dark-mode:
   extends: .template-package
+  needs:
+    - build-dark-mode
