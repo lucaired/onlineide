@@ -16,7 +16,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/projects/{projectId}/sourcefiles")
+@CrossOrigin
+@RequestMapping(path = "/api/projects/{projectId}/sourcefiles")
 public class SourceFileController {
 
     @Autowired

@@ -1,5 +1,6 @@
 package edu.tum.ase.darkmode;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @RestController
+@CrossOrigin
 @RequestMapping(path = "/dark-mode")
 public class DarkModeController {
 
