@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class CompilerServiceTest {
 
-    private final String URL = "/compile/";
+    private final String URL = "/api/compile/";
 
     @Autowired
     private MockMvc systemUnderTest;

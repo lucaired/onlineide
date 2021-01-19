@@ -13,7 +13,7 @@ public class CompilerController {
     @Autowired
     private CompilerService compilerService;
 
-    @RequestMapping(path = "/compile", method = RequestMethod.POST)
+    @RequestMapping(path = "/api/compile", method = RequestMethod.POST)
     public SourceCode compile(@Valid @RequestBody SourceCode sourceCode) {
         return compilerService.compile(sourceCode);
     }

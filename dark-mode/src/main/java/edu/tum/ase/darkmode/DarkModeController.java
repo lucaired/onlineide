@@ -10,7 +10,7 @@ import java.time.temporal.ChronoUnit;
 
 @RestController
 @CrossOrigin
-@RequestMapping(path = "/dark-mode")
+@RequestMapping(path = "/api/dark-mode")
 public class DarkModeController {
 
     /**
