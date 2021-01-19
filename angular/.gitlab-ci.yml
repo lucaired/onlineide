@@ -1,11 +1,10 @@
-variables:
-  MICROSERVICE_DIR: "angular"
-
 # We don't need a separate job for building the Angular files, since the mvn compile command already does this due to our configuration.
 # The proper output directory for the built files is set in angular/src/main/resources/ui/angular.json
 build-frontend:
   image: trion/ng-cli # For this job, use a different image than the globally defined one. This way we don't have to install the Angular dependencies manually.
   stage: build
+  variables:
+    MICROSERVICE_DIR: "angular"
   script:
     - cd $MICROSERVICE_DIR/src/main/resources/ui
     - npm ci
@@ -17,3 +16,5 @@ build-frontend:
 
 package-frontend:
   extends: .template-package
+  variables:
+    MICROSERVICE_DIR: "angular"

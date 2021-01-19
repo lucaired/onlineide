@@ -1,8 +1,7 @@
-variables:
-  MICROSERVICE_DIR: "compiler"
-
 build-compiler:
   extends: .template-build
+  variables:
+    MICROSERVICE_DIR: "compiler"
 
 test-compiler:
   stage: test
@@ -19,5 +18,7 @@ test-compiler:
 
 package-compiler:
   extends: .template-package
+  variables:
+    MICROSERVICE_DIR: "compiler"
   needs:
     - test-compiler
