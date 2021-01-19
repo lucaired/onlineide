@@ -5,6 +5,7 @@ import edu.tum.ase.errorhandling.exception.ResourceNotFoundException;
 import edu.tum.ase.project.model.Project;
 import edu.tum.ase.project.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(path = "/projects")
+@CrossOrigin
+@RequestMapping(path = "/api/projects")
 public class ProjectController {
 
     @Autowired
@@ -53,10 +55,11 @@ public class ProjectController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Project> readAllProjects() {
-        // Since we handle a list of objects here, the generated HATEOAS output looks different than for other endpoints
-        // CollectionModel<> seems to be a valid option, but results in a deeply nested object
-        return projectService.getAllProjects().stream().map(p -> p.add(buildSourceFileLink(p))).collect(Collectors.toList());
+    public CollectionModel<Project> readAllProjects() {
+        // Since this is a list of resources, we need to use CollectionModel<> to apply Spring HATEOAS.
+        // Simply returning List<Project> would create a response format that is different from the other endpoints.
+        List<Project> projects = projectService.getAllProjects().stream().map(p -> p.add(buildSourceFileLink(p))).collect(Collectors.toList());
+        return CollectionModel.of(projects);
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = {"/{id}"})
