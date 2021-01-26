@@ -1,0 +1,22 @@
+html {
+  box-sizing: border-box;
+}
+
+.wrapper-layout {
+  height: 100vh;
+}
+
+
+.inner-layout {
+  padding: 0 24px 24px;
+}
+
+nz-content {
+  padding: 24px;
+  min-height: 280px;
+}
+
+p.error-message {
+  color: red;
+}
+
