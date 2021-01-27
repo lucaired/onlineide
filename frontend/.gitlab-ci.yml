@@ -6,8 +6,10 @@ build-frontend:
   variables:
     MICROSERVICE_DIR: "frontend"
   script:
+    - cd $MICROSERVICE_DIR/src/main/resources/ui
+    - npm ci
     - cd $CI_PROJECT_DIR/$MICROSERVICE_DIR
-    - mvn $MAVEN_CLI_OPTS clean compile
+    - mvn $MAVEN_CLI_OPTS clean compile -e
   artifacts:
     paths:
       - $MICROSERVICE_DIR/src/main/resources/static/*
