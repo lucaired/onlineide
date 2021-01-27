@@ -4,7 +4,7 @@ build-frontend:
   image: trion/ng-cli # For this job, use a different image than the globally defined one. This way we don't have to install the Angular dependencies manually.
   stage: build
   variables:
-    MICROSERVICE_DIR: "angular"
+    MICROSERVICE_DIR: "frontend"
   script:
     - cd $MICROSERVICE_DIR/src/main/resources/ui
     - npm ci
@@ -17,4 +17,4 @@ build-frontend:
 package-frontend:
   extends: .template-package
   variables:
-    MICROSERVICE_DIR: "angular"
+    MICROSERVICE_DIR: "frontend"
