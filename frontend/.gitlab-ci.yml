@@ -14,5 +14,8 @@ build-frontend:
 
 package-frontend:
   extends: .template-package
+  image: lucaired/onlineide-frontend:latest
   variables:
     MICROSERVICE_DIR: "frontend"
+  needs:
+    - build-frontend
