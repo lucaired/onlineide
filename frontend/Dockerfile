@@ -1,14 +1,18 @@
-FROM ubuntu:18.04
+FROM node:lts-slim
 
-RUN apt-get update && apt-get install -y \
+ARG NG_CLI_VERSION=11.1.1
+LABEL angular-cli=$NG_CLI_VERSION node=$NODE_VERSION
+
+RUN add-apt-repository ppa:openjdk-r/ppa \
+RUN add-apt-repository ppa:openjdk-r/ppa \
+  apt-get update && apt-get install -y \
   build-essential \
   git \
   openjdk-11-jdk \
   maven \
   curl
 
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-RUN apt-get install -y nodejs
-RUN npm install -g @angular/cli
+RUN npm install -g @angular/cli@$NG_CLI_VERSION \
+RU npm cache clean --force
 
 CMD /bin/bash

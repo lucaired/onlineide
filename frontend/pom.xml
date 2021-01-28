@@ -37,36 +37,20 @@
 				<version>3.0.0</version>
 				<executions>
 					<execution>
-						<id>npm install</id>
+						<phase>validate</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<workingDirectory>src/main/resources/ui</workingDirectory>
-							<executable>npm</executable>
-							<arguments>
-								<argument>install</argument>
-								<argument>--save</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>angular-cli build</id>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<phase>compile</phase>
-						<configuration>
-							<executable>ng</executable>
-							<workingDirectory>src/main/resources/ui</workingDirectory>
-							<arguments>
-								<argument>build</argument>
-								<argument>--prod</argument>
-							</arguments>
-						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<executable>ng</executable>
+					<workingDirectory>ui</workingDirectory>
+					<arguments>
+						<argument>build</argument>
+						<argument>--prod</argument>
+					</arguments>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
