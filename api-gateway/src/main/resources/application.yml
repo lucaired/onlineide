@@ -22,6 +22,10 @@ zuul:
       path: "/api/projects/**"
       serviceId: project-service
       strip-prefix: false
+    ui-service:
+      path: "/ui/**"
+      serviceId: ui-service
+      strip-prefix: false
 # Proposed settings from the exercise sheet
 zuul.host.socket-timeout-millis: 20000
 zuul.host.connect-timeout-millis: 20000
