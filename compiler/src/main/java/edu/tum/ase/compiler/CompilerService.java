@@ -28,21 +28,34 @@ public class CompilerService {
         }
     }
 
+    public Runtime getRuntime() {
+        return Runtime.getRuntime();
+    }
+
+    public FileWriter makeWriter(File f) throws IOException {
+        return new FileWriter(f);
+    }
+
     public SourceCode compile(SourceCode sourceCode) {
 
-        File file = new File(Files.createTempDir(), sourceCode.getFileName());
+        File tempDir = Files.createTempDir();
+        File file = new File(tempDir, sourceCode.getFileName());
         try {
-            FileWriter writer = new FileWriter(file);
+            FileWriter writer = makeWriter(file);
             writer.write(sourceCode.getCode());
             writer.close();
         } catch (IOException ex) {
             throw new RuntimeException("Could not write temporary file used for compilation: " + file.getPath());
         }
 
-        String cmd = getCompileCommand(sourceCode.getLanguage(), file.getPath());
+        // Build a shell command not only consisting of the actual compiler command, but change into the created temporary directory first.
+        // This is necessary (at least for gcc) so that the compiled file is not created in the current working directory, but in the temporary folder.
+        String cmd = "cd " + tempDir + " && " + getCompileCommand(sourceCode.getLanguage(), sourceCode.getFileName());
         Process p;
         try {
-            p = Runtime.getRuntime().exec(cmd);
+            // Since several commands are concatenated (&&) this explicit command structure is necessary when calling exec().
+            String[] commands = {"/bin/bash", "-c", cmd};
+            p = getRuntime().exec(commands);
         } catch (IOException e) {
             throw new RuntimeException("Could not execute the compilation command: " + cmd);
         }
@@ -52,7 +65,7 @@ public class CompilerService {
         String stdout = convertToString(p.getInputStream());
         sourceCode.setStdout(stdout);
 
-        sourceCode.setCompilable(stderr.equals(""));
+        sourceCode.setCompilable(stderr.isBlank());
 
         // TODO: Delete the temporary file (and parent folder) after the compilation?
 

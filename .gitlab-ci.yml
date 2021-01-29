@@ -1,0 +1,45 @@
+image: maven:3.6.3-jdk-11
+
+include:
+  - local: "/ui/.gitlab-ci.yml"
+  - local: "/error-handling/.gitlab-ci.yml"
+  - local: "/compiler/.gitlab-ci.yml"
+  - local: "/dark-mode/.gitlab-ci.yml"
+  - local: "/project/.gitlab-ci.yml"
+
+cache:
+  paths:
+    - .m2/repository
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode"
+
+stages:
+  - package-dependencies
+  - build
+  - test
+  - package
+
+.template-build:
+  stage: build
+  script:
+    - cd $MICROSERVICE_DIR
+    - mvn $MAVEN_CLI_OPTS clean compile
+  needs:
+    - package-error-handling
+
+.template-package:
+  stage: package
+  variables:
+    # This is not an optimal solution because the command for setting the repository path is duplicated.
+    # It would be cleaner to extend the globally set environment variable MAVEN_OPTS with the part needed here (to skip the tests).
+    # However, there seems to be no other reasonable solution for this at the moment.
+    # In https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1809 this problem is discussed and also a workaround is suggested, which unfortunately did not work as expected.
+    MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -DskipTests=true"
+  script:
+    - cd $MICROSERVICE_DIR
+    - mvn $MAVEN_CLI_OPTS package
+  artifacts:
+    paths:
+      - $MICROSERVICE_DIR/target/*.jar
