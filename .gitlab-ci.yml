@@ -1,7 +1,7 @@
 image: maven:3.6.3-jdk-11
 
 include:
-  - local: "/frontend/.gitlab-ci.yml"
+  - local: "/ui/.gitlab-ci.yml"
   - local: "/error-handling/.gitlab-ci.yml"
   - local: "/compiler/.gitlab-ci.yml"
   - local: "/dark-mode/.gitlab-ci.yml"
