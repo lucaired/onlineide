@@ -34,10 +34,17 @@ zuul:
       path: "/api/projects/**"
       serviceId: project-service
       strip-prefix: false
+      # Exclude the Authentication header from the sensitive headers (i.e. headers that are not forwarded).
+      # Therefore, this header will be available in downstream services.
+      sensitiveHeaders: Cookie,Set-Cookie
     ui-service:
       path: "/ui/**"
       serviceId: ui-service
       strip-prefix: false
+proxy:
+  auth:
+    routes:
+      project-service: oauth2
 # Proposed settings from the exercise sheet
 zuul.host.socket-timeout-millis: 20000
 zuul.host.connect-timeout-millis: 20000
