@@ -8,9 +8,6 @@ build-ui:
   script:
     - cd $CI_PROJECT_DIR/$MICROSERVICE_DIR
     - mvn $MAVEN_CLI_OPTS clean compile -e
-  artifacts:
-    paths:
-      - $MICROSERVICE_DIR/src/main/resources/public/*
 
 package-ui:
   extends: .template-package
