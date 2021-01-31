@@ -21,6 +21,10 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+    public Project shareProject(Project project, String user) {
+        // TODO
+    }
+
     public Optional<Project> findByName(String name) {
         return projectRepository.findByName(name);
     }

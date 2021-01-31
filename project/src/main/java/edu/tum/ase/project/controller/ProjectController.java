@@ -5,9 +5,14 @@ import edu.tum.ase.project.error.ResourceNotFoundException;
 import edu.tum.ase.project.model.Project;
 import edu.tum.ase.project.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.OAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestOperations;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,6 +28,21 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @CrossOrigin
 @RequestMapping(path = "/api/projects")
 public class ProjectController {
+
+
+    //  TODO: @PostFilter and @PostAuthorize only users in project_users should access!
+
+
+    @Bean
+    public OAuth2RestOperations restTemplate(OAuth2ClientContext context) {
+        ClientCredentialsResourceDetails details = new ClientCredentialsResourceDetails();
+        return new OAuth2RestTemplate(details, context);
+    }
+
+    @Autowired
+    private OAuth2RestOperations restTemplate;
+    // ... = restTemplate.getForObject(...);
+    // https://gitlab.lrz.de/api/v4/search?scope=users&search=doe
 
     @Autowired
     private ProjectService projectService;
@@ -46,6 +66,11 @@ public class ProjectController {
 
         // Return HTTP status 201 (Created) and a header containing the location of the created resource
         return ResponseEntity.created(location).body(p);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = {"/{id}/{userName}"})
+    public Object shareProject(@PathVariable(name = "id") String id, @PathVariable(name="userName") String userName) {
+
     }
 
     @RequestMapping(method = RequestMethod.GET, path = {"/{id}"})
