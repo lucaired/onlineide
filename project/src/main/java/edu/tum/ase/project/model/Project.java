@@ -10,10 +10,11 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -35,4 +36,9 @@ public class Project extends RepresentationModel<Project> {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private List<SourceFile> sourceFiles = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "project_users", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "userIds")
+    private Set<String> userIds = new HashSet<>();
 }
