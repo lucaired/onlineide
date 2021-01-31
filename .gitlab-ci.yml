@@ -1,13 +1,13 @@
 image: maven:3.6.3-jdk-11
 
 include:
-  - local: "/ui/.gitlab-ci.yml"
+ # - local: "/ui/.gitlab-ci.yml"
   - local: "/error-handling/.gitlab-ci.yml"
-  - local: "/compiler/.gitlab-ci.yml"
+ # - local: "/compiler/.gitlab-ci.yml"
   - local: "/dark-mode/.gitlab-ci.yml"
-  - local: "/project/.gitlab-ci.yml"
-  - local: "/api-gateway/.gitlab-ci.yml"
-  - local: "/service-registry/.gitlab-ci.yml"
+ # - local: "/project/.gitlab-ci.yml"
+ # - local: "/api-gateway/.gitlab-ci.yml"
+ # - local: "/service-registry/.gitlab-ci.yml"
 
 cache:
   paths:

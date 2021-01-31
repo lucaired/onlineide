@@ -9,5 +9,12 @@ package-dark-mode:
   extends: .template-package
   variables:
     MICROSERVICE_DIR: "dark-mode"
+    CI_DEPLOY_USERNAME: $CI_DEPLOY_USERNAME
+    CI_DEPLOY_TOKEN: $CI_DEPLOY_TOKEN
+
+  script:
+    - cd $MICROSERVICE_DIR
+    - mvn $MAVEN_CLI_OPTS clean compile
+    - mvn compile jib:build -Djib.to.auth.username=$CI_DEPLOY_USERNAME -Djib.to.auth.password=$CI_DEPLOY_TOKEN
   needs:
     - build-dark-mode
