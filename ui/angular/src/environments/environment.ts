@@ -4,6 +4,7 @@
 export const environment = {
   production: false,
   api: {
+    user: 'http://localhost/user',
     projects: 'http://localhost:8100/api/projects',
     compiler: 'http://localhost:8200/api/compile',
     darkMode: 'http://localhost:8300/api/dark-mode'
