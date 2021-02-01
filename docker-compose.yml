@@ -1,0 +1,66 @@
+version: "3.7"
+
+services:
+  service-registry:
+    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/service-registry
+    restart: on-failure
+    ports:
+      - 8761:8761
+
+  gateway:
+    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/api-gateway
+    restart: on-failure
+    environment:
+      OAUTH_CLIENT_ID:
+      OAUTH_CLIENT_SECRET:
+      EUREKA_SERVER: http://service-registry:8761/eureka
+    depends_on:
+      - service-registry
+    ports:
+      - 80:80
+
+  ui:
+    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/ui
+    restart: on-failure
+    environment:
+      EUREKA_SERVER: http://service-registry:8761/eureka
+    depends_on:
+      - gateway
+    ports:
+      - 8400:8400
+
+  dark-mode:
+    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/dark-mode
+    restart: on-failure
+    environment:
+      EUREKA_SERVER: http://service-registry:8761/eureka
+    depends_on:
+      - gateway
+    ports:
+      - 8300:8300
+
+  project:
+    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/project
+    restart: on-failure
+    environment:
+      EUREKA_SERVER: http://service-registry:8761/eureka
+
+      OAUTH_CLIENT_ID:
+      OAUTH_CLIENT_SECRET:
+    depends_on:
+      - gateway
+    ports:
+      - 8100:8100
+
+  compiler:
+    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/compiler
+    restart: on-failure
+    environment:
+      EUREKA_SERVER: http://service-registry:8761/eureka
+    depends_on:
+      - gateway
+    ports:
+      - 8200:8200
+
+
+
