@@ -1,13 +1,13 @@
 image: maven:3.6.3-jdk-11
 
 include:
- # - local: "/ui/.gitlab-ci.yml"
+  - local: "/ui/.gitlab-ci.yml"
   - local: "/error-handling/.gitlab-ci.yml"
- # - local: "/compiler/.gitlab-ci.yml"
+  - local: "/compiler/.gitlab-ci.yml"
   - local: "/dark-mode/.gitlab-ci.yml"
- # - local: "/project/.gitlab-ci.yml"
- # - local: "/api-gateway/.gitlab-ci.yml"
- # - local: "/service-registry/.gitlab-ci.yml"
+  - local: "/project/.gitlab-ci.yml"
+  - local: "/api-gateway/.gitlab-ci.yml"
+  - local: "/service-registry/.gitlab-ci.yml"
 
 cache:
   paths:
@@ -41,7 +41,8 @@ stages:
     MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -DskipTests=true"
   script:
     - cd $MICROSERVICE_DIR
-    - mvn $MAVEN_CLI_OPTS package
+    - mvn $MAVEN_CLI_OPTS clean compile
+    - mvn compile jib:build -Djib.to.auth.username=$CI_DEPLOY_USERNAME -Djib.to.auth.password=$CI_DEPLOY_TOKEN
   artifacts:
     paths:
       - $MICROSERVICE_DIR/target/*.jar
