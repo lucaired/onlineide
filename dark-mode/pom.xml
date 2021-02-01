@@ -63,6 +63,11 @@
 					<to>
 						<image>gitlab.lrz.de:5005/ase20-group5-1/onlineide/dark-mode</image>
 					</to>
+					<container>
+						<ports>
+							<port>8300</port>
+						</ports>
+					</container>
 				</configuration>
 			</plugin>
 		</plugins>
