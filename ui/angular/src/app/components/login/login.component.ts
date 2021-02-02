@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
+import {AuthService} from '@services/auth/auth.service';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -9,11 +11,20 @@ import {Router} from '@angular/router';
 export class LoginComponent implements OnInit {
 
   constructor(
-    private router: Router) {
+    private router: Router,
+    public authService: AuthService
+  ) {
   }
 
-  public gotoProject() {
-    this.router.navigate(['/projects']);
+  public login() {
+    this.authService.isAuthenticated$.subscribe((authenticated) => {
+      console.log(authenticated);
+      if (authenticated) {
+        this.router.navigate(['/projects']);
+      } else {
+        this.authService.login();
+      }
+    });
   }
 
   ngOnInit(): void {

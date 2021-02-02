@@ -6,6 +6,7 @@ export const environment = {
   production: true,
   api: {
     user: '/user',
+    login: '/login',
     logout: '/logout',
     projects: '/api/projects',
     compiler: '/api/compile',

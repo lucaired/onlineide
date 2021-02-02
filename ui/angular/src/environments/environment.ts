@@ -3,10 +3,19 @@
 // However, for the final local testing of a feature, the production environment should then be used.
 export const environment = {
   production: false,
+  // api: {
+  //   user: 'http://localhost/user',
+  // logout: 'http://localhost/logout',
+  //   projects: 'http://localhost:8100/api/projects',
+  //   compiler: 'http://localhost:8200/api/compile',
+  //   darkMode: 'http://localhost:8300/api/dark-mode'
+  // },
   api: {
-    user: 'http://localhost/user',
-    projects: 'http://localhost:8100/api/projects',
-    compiler: 'http://localhost:8200/api/compile',
-    darkMode: 'http://localhost:8300/api/dark-mode'
+    user: 'http://localhost:80/user',
+    login: 'http://localhost:80/login',
+    logout: 'http://localhost:80/logout',
+    projects: 'http://localhost:80/api/projects',
+    compiler: 'http://localhost:80/api/compile',
+    darkMode: 'http://localhost:80/api/dark-mode'
   }
 };
