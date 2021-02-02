@@ -83,6 +83,9 @@
 				<artifactId>jib-maven-plugin</artifactId>
 				<version>2.7.1</version>
 				<configuration>
+					<from>
+						<image>gitlab.lrz.de:5005/ase20-group5-1/onlineide/compiler-runner</image>
+					</from>
 					<to>
 						<image>gitlab.lrz.de:5005/ase20-group5-1/onlineide/compiler</image>
 					</to>
