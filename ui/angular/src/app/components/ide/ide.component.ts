@@ -10,6 +10,8 @@ import {ProjectService} from '@services/project/project.service';
 import {CompilerService} from '@services/compiler/compiler.service';
 import {ICompilableFile} from '@models/compilable-file.model';
 import {NzMessageService} from 'ng-zorro-antd/message';
+import {Theme} from '@models/theme.model';
+import {IDarkMode} from '@models/dark-mode.model';
 
 
 @Component({
@@ -34,6 +36,9 @@ export class IdeComponent implements OnInit {
   newSourceFile: ISourceFile = {fileName: '', sourceCode: ''};
   fileAlreadyExists = false;
   projectId$ = new BehaviorSubject<string>(null);
+
+  private theme$: BehaviorSubject<Theme> = new BehaviorSubject<Theme>(Theme.LIGHT);
+
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -65,8 +70,23 @@ export class IdeComponent implements OnInit {
       this.sourceFiles$.next(sourceFiles);
     });
 
+    // Dark mode polling
+    setInterval(() => {
+      try {
+        this.darkModeService.getDarkMode().subscribe((res: IDarkMode) => {
+          if (res?.enabled) {
+            this.theme$.next(Theme.DARK);
+          } else {
+            this.theme$.next(Theme.LIGHT);
+          }
+        });
+      } catch (err) {
+
+      }
+    }, 3000);
+
     // Toggle editor theme
-    this.darkModeService.theme$.subscribe(theme => {
+    this.theme$.subscribe(theme => {
       if (theme) {
         const options = this.editorOptions$.getValue();
         options.theme = `vs-${theme}`;
