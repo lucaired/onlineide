@@ -20,28 +20,32 @@ export class AuthService {
   constructor(
     private http: HttpClient
   ) {
-    this.http.get(USER).pipe(
-      map(res => res),
-    ).subscribe((res: any) => {
-      if (res?.ok && res.principal) {
-        this.userName$.next(res.principal);
-        this._isAuthenticated$.next(true);
-      }
-    });
+    this.fetchAuthenticated();
   }
 
-  get isAuthenticated$(): BehaviorSubject<boolean> {
+  get isAuthenticated$(): Observable<boolean | any> {
     return this._isAuthenticated$;
-  }
-
-  public login() {
-    const redirectUrl = `${window.location.origin}/login`;
-    console.log(redirectUrl);
-    window.location.href = redirectUrl;
   }
 
   public logout() {
     this.http.post(environment.api.logout, {}).subscribe(res => console.log(res));
-    this._isAuthenticated$.next(false);
+    // this.isAuthenticated$.next(false);
+    this.fetchAuthenticated();
+  }
+
+  public fetchAuthenticated() {
+    this.http.get(environment.api.authenticated).subscribe((res: boolean) => {
+      this._isAuthenticated$.next(res);
+      console.log(`Is authenticated: ${res}`);
+      if (res) {
+        this.fetchUser();
+      }
+    });
+  }
+
+  public fetchUser() {
+    this.http.get(environment.api.user).subscribe((user) => {
+      this.userName$.next(user.principal);
+    });
   }
 }

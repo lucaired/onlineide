@@ -7,6 +7,7 @@ export const environment = {
   api: {
     user: '/user',
     login: '/login',
+    authenticated: '/authenticated',
     logout: '/logout',
     projects: '/api/projects',
     compiler: '/api/compile',

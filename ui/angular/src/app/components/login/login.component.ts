@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthService} from '@services/auth/auth.service';
 import {map} from 'rxjs/operators';
+import {environment} from '@env';
 
 @Component({
   selector: 'app-login',
@@ -16,17 +17,10 @@ export class LoginComponent implements OnInit {
   ) {
   }
 
-  public login() {
-    this.authService.isAuthenticated$.subscribe((authenticated) => {
-      console.log(authenticated);
-      if (authenticated) {
-        this.router.navigate(['/projects']);
-      } else {
-        this.authService.login();
-      }
-    });
+  ngOnInit(): void {
   }
 
-  ngOnInit(): void {
+  login() {
+    window.location.href = environment.api.login;
   }
 }

@@ -12,6 +12,7 @@ export const environment = {
   // },
   api: {
     user: 'http://localhost:80/user',
+    authenticated: 'http://localhost:80/authenticated',
     login: 'http://localhost:80/login',
     logout: 'http://localhost:80/logout',
     projects: 'http://localhost:80/api/projects',
