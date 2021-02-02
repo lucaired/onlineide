@@ -38,7 +38,7 @@ public class Project extends RepresentationModel<Project> {
     private List<SourceFile> sourceFiles = new ArrayList<>();
 
     @ElementCollection
-    @CollectionTable(name = "project_users", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "userIds")
-    private Set<String> userIds = new HashSet<>();
+    @CollectionTable(name = "project_members", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "memberIds")
+    private Set<String> memberIds = new HashSet<>();
 }

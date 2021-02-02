@@ -2,17 +2,16 @@ package edu.tum.ase.project.controller;
 
 import edu.tum.ase.project.error.ResourceAlreadyExistsException;
 import edu.tum.ase.project.error.ResourceNotFoundException;
+import edu.tum.ase.project.model.GitLabUser;
 import edu.tum.ase.project.model.Project;
+import edu.tum.ase.project.model.ProjectMember;
+import edu.tum.ase.project.service.AuthService;
+import edu.tum.ase.project.service.GitLabService;
 import edu.tum.ase.project.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.OAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2RestOperations;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,23 +28,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping(path = "/api/projects")
 public class ProjectController {
 
-
-    //  TODO: @PostFilter and @PostAuthorize only users in project_users should access!
-
-
-    @Bean
-    public OAuth2RestOperations restTemplate(OAuth2ClientContext context) {
-        ClientCredentialsResourceDetails details = new ClientCredentialsResourceDetails();
-        return new OAuth2RestTemplate(details, context);
-    }
-
-    @Autowired
-    private OAuth2RestOperations restTemplate;
-    // ... = restTemplate.getForObject(...);
-    // https://gitlab.lrz.de/api/v4/search?scope=users&search=doe
-
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private GitLabService gitLabService;
 
 
     @RequestMapping(method = RequestMethod.POST)
@@ -53,6 +43,7 @@ public class ProjectController {
         if (projectService.findByName(project.getName()).isPresent())
             throw new ResourceAlreadyExistsException(Project.class, "name", project.getName());
 
+        project.getMemberIds().add(authService.getCurrentUsername());
         Project p = projectService.createProject(project);
 
         URI location;
@@ -68,9 +59,20 @@ public class ProjectController {
         return ResponseEntity.created(location).body(p);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = {"/{id}/{userName}"})
-    public Object shareProject(@PathVariable(name = "id") String id, @PathVariable(name="userName") String userName) {
+    @RequestMapping(method = RequestMethod.POST, path = {"/{id}/members"})
+    public Project addMember(@PathVariable(name = "id") String projectId, @RequestBody ProjectMember member) {
+        // The GitLab API is not used to implement the actual sharing of a project because the projects created in the OnlineIDE are not GitLab projects.
+        // Instead, we only use the GitLab API to check if an intended new member even exists.
+        GitLabUser user = gitLabService.findUser(member.getUsername());
+        Project project = projectService.addMember(projectId, user.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException(Project.class, projectId));
+        return project.add(buildSourceFileLink(project));
+    }
 
+    @RequestMapping(method = RequestMethod.DELETE, path = {"/{id}/members/{username}"})
+    public Project removeMember(@PathVariable(name = "id") String projectId, @PathVariable(name = "username") String username) {
+        Project p = projectService.removeMember(projectId, username).orElseThrow(() -> new ResourceNotFoundException(Project.class, projectId));
+        return p.add(buildSourceFileLink(p));
     }
 
     @RequestMapping(method = RequestMethod.GET, path = {"/{id}"})
