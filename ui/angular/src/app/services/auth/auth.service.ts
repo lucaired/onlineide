@@ -44,7 +44,7 @@ export class AuthService {
   }
 
   public fetchUser() {
-    this.http.get(environment.api.user).subscribe((user) => {
+    this.http.get(environment.api.user).subscribe((user: { principal: boolean }) => {
       this.userName$.next(user.principal);
     });
   }
