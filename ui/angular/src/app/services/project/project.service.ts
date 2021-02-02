@@ -47,6 +47,20 @@ export class ProjectService {
       });
   }
 
+  public addProjectMember(id: string, username: string) {
+    this.http.post(`${PROJECTS}/${id}/members`, {username})
+      .subscribe((result: any) => {
+        this.fetchAllProjects();
+      });
+  }
+
+  public removeProjectMember(id: string, username: string) {
+    this.http.delete(`${PROJECTS}/${id}/members/${username}`)
+      .subscribe((result: any) => {
+        this.fetchAllProjects();
+      });
+  }
+
   private fetchAllProjects(): void {
     this.http.get(PROJECTS)
       .subscribe((data: IProject | any) => {

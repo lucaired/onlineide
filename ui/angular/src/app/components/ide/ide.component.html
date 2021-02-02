@@ -46,7 +46,10 @@
           {{f.fileName}}
         </li>
       </ul>
-      <button nz-button nzType="default" (click)="shareProject()">Share Project</button>
+      <button nz-button nzType="default" (click)="addMember()">Share Project</button>
+      <button nz-button nzType="default" (click)="removeMember()">Remove member</button>
+      <!-- TODO: Improve this as this is only for testing purposes -->
+      <input nz-input placeholder="LRZ GitLab username" [(ngModel)]="projectMemberToEdit"/>
     </nz-sider>
 
     <!-- Editor and Output -->

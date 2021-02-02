@@ -28,6 +28,9 @@ export class IdeComponent implements OnInit {
 
   newFileModalVisible = false;
 
+  // TODO: Improve/remove for real implementation
+  projectMemberToEdit: string; // currently used to remove and add members
+
   newSourceFile: ISourceFile = {fileName: '', sourceCode: ''};
   fileAlreadyExists = false;
   projectId$ = new BehaviorSubject<string>(null);
@@ -37,6 +40,7 @@ export class IdeComponent implements OnInit {
     public sourceFilesService: SourceFilesService,
     public compilerService: CompilerService,
     public darkModeService: DarkModeService,
+    public projectService: ProjectService,
     private messageService: NzMessageService
   ) {
   }
@@ -80,8 +84,14 @@ export class IdeComponent implements OnInit {
     });
   }
 
-  shareProject(): void {
-    console.log('TODO');
+  addMember(): void {
+    const projectId = this.projectId$.getValue();
+    this.projectService.addProjectMember(projectId, this.projectMemberToEdit);
+  }
+
+  removeMember(): void {
+    const projectId = this.projectId$.getValue();
+    this.projectService.removeProjectMember(projectId, this.projectMemberToEdit);
   }
 
   setDirty(sourceFile: ISourceFile): void {
