@@ -22,6 +22,7 @@ stages:
   - build
   - test
   - package
+  - deploy
 
 .template-build:
   stage: build
@@ -46,3 +47,22 @@ stages:
   artifacts:
     paths:
       - $MICROSERVICE_DIR/target/*.jar
+
+deploy-to-gcp:
+  stage: deploy
+  image: ubuntu:18.04
+  script:
+    - 'which ssh-agent || (apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - scp -r docker-compose.yml $SSH_HOST:~/
+    - ssh $SSH_HOST "sudo docker login -u $CI_DEPLOY_USERNAME $CI_DEPLOY_TOKEN gitlab.lrz.de:5005"
+    - ssh $SSH_HOST "sudo docker-compose pull && sudo docker-compose up --force-recreate
+  variables:
+    SSH_HOST: marc@35.242.243.82
+  only:
+    refs:
+      - master
