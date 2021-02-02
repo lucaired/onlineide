@@ -2,13 +2,13 @@ version: "3.7"
 
 services:
   service-registry:
-    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/service-registry
+    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/service-registry:latest
     restart: on-failure
     ports:
       - 8761:8761
 
   gateway:
-    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/api-gateway
+    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/api-gateway:latest
     restart: on-failure
     environment:
       OAUTH_CLIENT_ID:
@@ -20,7 +20,7 @@ services:
       - 80:80
 
   ui:
-    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/ui
+    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/ui:latest
     restart: on-failure
     environment:
       EUREKA_SERVER: http://service-registry:8761/eureka
@@ -30,7 +30,7 @@ services:
       - 8400:8400
 
   dark-mode:
-    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/dark-mode
+    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/dark-mode:latest
     restart: on-failure
     environment:
       EUREKA_SERVER: http://service-registry:8761/eureka
@@ -40,20 +40,30 @@ services:
       - 8300:8300
 
   project:
-    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/project
+    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/project:latest
     restart: on-failure
     environment:
       EUREKA_SERVER: http://service-registry:8761/eureka
 
       OAUTH_CLIENT_ID:
       OAUTH_CLIENT_SECRET:
+
+      SPRING_PROFILE: dev
+
+      DB_TYPE: postgresql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: my_db
+      DB_USER: admin
+      DB_PASSWORD: test
     depends_on:
       - gateway
+      - postgres
     ports:
       - 8100:8100
 
   compiler:
-    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/compiler
+    image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/compiler:latest
     restart: on-failure
     environment:
       EUREKA_SERVER: http://service-registry:8761/eureka
@@ -61,6 +71,21 @@ services:
       - gateway
     ports:
       - 8200:8200
+
+  postgres:
+    image: library/postgres:13-alpine
+    hostname: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: my_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: test
+
+volumes:
+  data:
 
 
 

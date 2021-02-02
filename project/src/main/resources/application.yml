@@ -2,7 +2,7 @@ spring:
   application:
     name: project-service
   profiles:
-    active: dev
+    active: ${SPRING_PROFILE:dev}
 server:
   port: 8100
 eureka:
