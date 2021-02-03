@@ -50,14 +50,14 @@ stages:
 
 deploy-to-gcp:
   stage: production
-  image: ubuntu:18.04
-  script:
-    - 'which ssh-agent || (apt-get update -y && apt-get install openssh-client -y )'
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  script:
     - scp -r docker-compose.yml $SSH_HOST:~/
     - ssh $SSH_HOST "sudo docker login -u $CI_DEPLOY_USERNAME $CI_DEPLOY_TOKEN gitlab.lrz.de:5005"
     - ssh $SSH_HOST "sudo docker-compose pull && sudo docker-compose up --force-recreate
