@@ -12,6 +12,7 @@ import {ICompilableFile} from '@models/compilable-file.model';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {Theme} from '@models/theme.model';
 import {IDarkMode} from '@models/dark-mode.model';
+import {AuthService} from '@services/auth/auth.service';
 
 
 @Component({
@@ -29,9 +30,9 @@ export class IdeComponent implements OnInit {
   currentCompilationResult$ = new BehaviorSubject<ICompilableFile>(null);
 
   newFileModalVisible = false;
+  addMemberModalVisible = false;
 
-  // TODO: Improve/remove for real implementation
-  projectMemberToEdit: string; // currently used to remove and add members
+  projectMemberToAdd: string;
 
   newSourceFile: ISourceFile = {fileName: '', sourceCode: ''};
   fileAlreadyExists = false;
@@ -39,14 +40,14 @@ export class IdeComponent implements OnInit {
 
   private theme$: BehaviorSubject<Theme> = new BehaviorSubject<Theme>(Theme.LIGHT);
 
-
   constructor(
     private activatedRoute: ActivatedRoute,
     public sourceFilesService: SourceFilesService,
     public compilerService: CompilerService,
     public darkModeService: DarkModeService,
     public projectService: ProjectService,
-    private messageService: NzMessageService
+    private messageService: NzMessageService,
+    public authService: AuthService,
   ) {
   }
 
@@ -104,15 +105,23 @@ export class IdeComponent implements OnInit {
     });
   }
 
-  addMember(): void {
-    const projectId = this.projectId$.getValue();
-    this.projectService.addProjectMember(projectId, this.projectMemberToEdit);
+  toggleShareModal(): void {
+    this.addMemberModalVisible = !this.addMemberModalVisible;
   }
 
-  removeMember(): void {
-    const projectId = this.projectId$.getValue();
-    this.projectService.removeProjectMember(projectId, this.projectMemberToEdit);
+  handleCancelMemberModal(): void {
+    this.toggleShareModal();
   }
+
+  handleOkMemberModal(): void {
+    this.projectService.addProjectMember(this.projectId$.getValue(), this.projectMemberToAdd);
+    this.toggleShareModal();
+  }
+
+  // removeMember(): void {
+  //   const projectId = this.projectId$.getValue();
+  //   this.projectService.removeProjectMember(projectId, this.projectMemberToEdit);
+  // }
 
   setDirty(sourceFile: ISourceFile): void {
     sourceFile.dirty = true;
@@ -130,23 +139,23 @@ export class IdeComponent implements OnInit {
     // `selectedSourceFile$` will contain the latest server state, we're checking the sourcecode against
     // the current file passed for compilation. If the contents don't match we ask the user to save the file
     // first
-      if (sourceFile.dirty) {
-        this.messageService.error('Save file first');
-      } else {
-        this.compilerService.compile(sourceFile).subscribe((res: ICompilableFile) => {
-          console.log(res);
-          if (res?.fileName) {
-            this.currentCompilationResult$.next(res);
-            if (res.compilable) {
-              this.messageService.success('Compilation successful 😍');
-            } else {
-              this.messageService.error('Compilation failed.');
-            }
+    if (sourceFile.dirty) {
+      this.messageService.error('Save file first');
+    } else {
+      this.compilerService.compile(sourceFile).subscribe((res: ICompilableFile) => {
+        console.log(res);
+        if (res?.fileName) {
+          this.currentCompilationResult$.next(res);
+          if (res.compilable) {
+            this.messageService.success('Compilation successful 😍');
           } else {
-            this.messageService.error('Unknown error :/');
+            this.messageService.error('Compilation failed.');
           }
-        });
-      }
+        } else {
+          this.messageService.error('Unknown error :/');
+        }
+      });
+    }
   }
 
   deleteSourceFile(sourceFileId: string): void {

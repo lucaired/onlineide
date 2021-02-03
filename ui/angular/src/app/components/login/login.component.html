@@ -3,7 +3,6 @@
     <div class="inner-content">
       <h1>Welcome to the OnlineIDE</h1>
       <p>A project for Advanced Topics of Software Engineering (TUM)</p>
-      <a href="http://localhost:80/login">Login Test</a>
       <button *ngIf="!(authService.isAuthenticated$ | async)" nz-button nzDanger="primary"
               (click)="login()">
         Login with GitLab LRZ
