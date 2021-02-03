@@ -22,7 +22,7 @@ stages:
   - build
   - test
   - package
-  - deploy
+  - production
 
 .template-build:
   stage: build
@@ -49,7 +49,7 @@ stages:
       - $MICROSERVICE_DIR/target/*.jar
 
 deploy-to-gcp:
-  stage: deploy
+  stage: production
   image: ubuntu:18.04
   script:
     - 'which ssh-agent || (apt-get update -y && apt-get install openssh-client -y )'
@@ -64,5 +64,4 @@ deploy-to-gcp:
   variables:
     SSH_HOST: marc@35.242.243.82
   only:
-    refs:
-      - master
+    - merge_requests
