@@ -1,0 +1,13 @@
+build-api-gateway:
+  extends: .template-build
+  variables:
+    MICROSERVICE_DIR: "api-gateway"
+
+# There is currently no test job for this microservice
+
+package-api-gateway:
+  extends: .template-package
+  variables:
+    MICROSERVICE_DIR: "api-gateway"
+  needs:
+    - build-api-gateway

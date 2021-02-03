@@ -1,0 +1,13 @@
+build-service-registry:
+  extends: .template-build
+  variables:
+    MICROSERVICE_DIR: "service-registry"
+
+# There is currently no test job for this microservice
+
+package-service-registry:
+  extends: .template-package
+  variables:
+    MICROSERVICE_DIR: "service-registry"
+  needs:
+    - build-service-registry

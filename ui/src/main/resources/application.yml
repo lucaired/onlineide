@@ -1,8 +1,10 @@
 spring:
   application:
-    name: darkmode-service
+    name: ui-service
 server:
-  port: 8300
+  port: 8400
+  servlet:
+    contextPath: /ui
 eureka:
   client:
     serviceUrl:

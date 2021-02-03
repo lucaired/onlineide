@@ -6,6 +6,8 @@ include:
   - local: "/compiler/.gitlab-ci.yml"
   - local: "/dark-mode/.gitlab-ci.yml"
   - local: "/project/.gitlab-ci.yml"
+  - local: "/api-gateway/.gitlab-ci.yml"
+  - local: "/service-registry/.gitlab-ci.yml"
 
 cache:
   paths:
