@@ -52,7 +52,7 @@
       <button nz-button nzType="default" (click)="toggleShareModal()">Share Project</button>
       <div *ngIf="projectService.getProject(projectId$ | async) | async as p">
         <h4>Members:</h4>
-        <ul>
+        <ul class="members-list">
           <li *ngFor="let m of p.memberIds">{{ m }}</li>
         </ul>
       </div>
