@@ -28,7 +28,7 @@ export class AuthService {
   public logout() {
     this.http.post(environment.api.logout, {}, {headers: getAuthHeaders()}).subscribe(res => console.log(res));
     // this.isAuthenticated$.next(false);
-    this.router.redirectByUrl('/login');
+    this.router.navigateByUrl('/login');
     this.fetchAuthenticated();
   }
 

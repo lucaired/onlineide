@@ -5,7 +5,7 @@ export function getAuthHeaders(): HttpHeaders {
   if (environment.production) {
     return new HttpHeaders();
   }
-  const headers = new HttpHeaders().set('Authorization', `Bearer ${environment.apiToken}`);
+  const headers = new HttpHeaders();
   // headers.append('X-XSRF-TOKEN', `${environment.xsrfToken}`);
   return headers;
 }
