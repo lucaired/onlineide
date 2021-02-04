@@ -63,3 +63,5 @@ deploy-to-gcp:
     - ssh $SSH_HOST "sudo docker-compose pull && sudo OAUTH_CLIENT_ID=$OAUTH_CLIENT_ID OAUTH_CLIENT_SECRET=$OAUTH_CLIENT_SECRET docker-compose up --force-recreate -d"
   variables:
     SSH_HOST: marc@35.242.243.82
+  only:
+  - development
