@@ -51,8 +51,8 @@ static void enetif_init(void) {
 
 static err_t connection_callback(void *arg, struct tcp_pcb *tpcb, err_t err) {
 	/* The actual http message*/
-	const *message = "GET /dark-mode/toggle HTTP/1.0\r\n\r\n";
-	u16_t message_len = 39;
+	const *message = "GET /api/dark-mode/toggle HTTP/1.0\r\n\r\n";
+	u16_t message_len = 43;
 
 	err_t error = tcp_write(tpcb, message, message_len, TCP_WRITE_FLAG_COPY);
 
@@ -76,11 +76,11 @@ static void create_tcp_connection() {
 	ip_addr_t local_ip;
 
 	/* Configure remote port and local port*/
-	uint16_t remote_port = 5000;
+	uint16_t remote_port = 80;
 	uint16_t local_port = 0;
 
 	/* Configure ip-address*/
-	ipaddr_aton("192.168.178.36", &remote_ip);
+	ipaddr_aton("35.242.243.82", &remote_ip);
 	ip_addr_set(&local_ip, &netif.ip_addr);
 
 	pcb = tcp_new();
