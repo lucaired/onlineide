@@ -44,9 +44,6 @@ stages:
     - cd $MICROSERVICE_DIR
     - mvn $MAVEN_CLI_OPTS clean compile
     - mvn compile jib:build -Djib.to.auth.username=$CI_DEPLOY_USERNAME -Djib.to.auth.password=$CI_DEPLOY_TOKEN -Djib.from.auth.username=$CI_DEPLOY_USERNAME -Djib.from.auth.password=$CI_DEPLOY_TOKEN
-  artifacts:
-    paths:
-      - $MICROSERVICE_DIR/target/*.jar
 
 deploy-to-gcp:
   stage: production
