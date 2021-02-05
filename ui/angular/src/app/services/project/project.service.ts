@@ -49,9 +49,7 @@ export class ProjectService {
   }
 
   public updateProject(project: IProject) {
-    this.http.put(`${PROJECTS}/${project.id}`, {
-      name: project.name
-    }, {headers: getAuthHeaders()})
+    this.http.put(`${PROJECTS}/${project.id}`, project, {headers: getAuthHeaders()})
       .subscribe((result: any) => {
         this.fetchAllProjects();
       });
