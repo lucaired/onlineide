@@ -12,8 +12,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 
 import javax.sql.DataSource;
 
-// Note the specified base packages to use the shared error handler in a separate project
-@SpringBootApplication(scanBasePackages = "edu.tum.ase")
+@SpringBootApplication
 @EnableEurekaClient
 @EnableResourceServer
 public class ProjectApplication implements CommandLineRunner {
