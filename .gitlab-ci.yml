@@ -22,6 +22,7 @@ stages:
   - build
   - test
   - package
+  - production
 
 .template-build:
   stage: build
@@ -41,7 +42,23 @@ stages:
     MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -DskipTests=true"
   script:
     - cd $MICROSERVICE_DIR
-    - mvn $MAVEN_CLI_OPTS package
-  artifacts:
-    paths:
-      - $MICROSERVICE_DIR/target/*.jar
+    - mvn $MAVEN_CLI_OPTS clean compile
+    - mvn compile jib:build -Djib.to.auth.username=$CI_DEPLOY_USERNAME -Djib.to.auth.password=$CI_DEPLOY_TOKEN -Djib.from.auth.username=$CI_DEPLOY_USERNAME -Djib.from.auth.password=$CI_DEPLOY_TOKEN
+
+deploy-to-gcp:
+  stage: production
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  script:
+    - scp -r docker-compose.yml $SSH_HOST:~/
+    - ssh $SSH_HOST "sudo docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN gitlab.lrz.de:5005"
+    - ssh $SSH_HOST "sudo docker-compose pull && sudo OAUTH_CLIENT_ID=$OAUTH_CLIENT_ID OAUTH_CLIENT_SECRET=$OAUTH_CLIENT_SECRET docker-compose up --force-recreate -d"
+  variables:
+    SSH_HOST: marc@35.242.243.82
+  only:
+  - development

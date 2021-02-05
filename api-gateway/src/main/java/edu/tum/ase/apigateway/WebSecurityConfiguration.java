@@ -30,6 +30,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/authenticated").permitAll()
                 .antMatchers("/user").authenticated()
+                // Note that the first match principle is used. For the incoming request, all patterns are therefore tested in the order shown here.
+                // Therefore the exception for the dark mode route works, because it is placed before the general wildcard for /api.
+                .antMatchers("/api/dark-mode/**").permitAll()
                 .antMatchers("/api/**").authenticated();
     }
 
