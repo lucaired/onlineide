@@ -89,7 +89,7 @@
   <nz-modal [(nzVisible)]="addMemberModalVisible" nzTitle="Rename" (nzOnCancel)="handleCancelMemberModal()"
             (nzOnOk)="handleOkMemberModal()">
     <ng-container *nzModalContent>
-      <input nz-input placeholder="LRZ Kennung" [(ngModel)]="projectMemberToAdd"/>
+      <input nz-input placeholder="GitLab username" [(ngModel)]="projectMemberToAdd"/>
     </ng-container>
   </nz-modal>
 
