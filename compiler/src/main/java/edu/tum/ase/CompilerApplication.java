@@ -4,8 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
-// Note the specified base packages to use the shared error handler in a separate project
-@SpringBootApplication(scanBasePackages = "edu.tum.ase")
+@SpringBootApplication
 @EnableEurekaClient
 public class CompilerApplication {
 

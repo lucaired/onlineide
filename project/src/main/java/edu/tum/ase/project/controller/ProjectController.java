@@ -1,7 +1,7 @@
 package edu.tum.ase.project.controller;
 
-import edu.tum.ase.errorhandling.exception.ResourceAlreadyExistsException;
-import edu.tum.ase.errorhandling.exception.ResourceNotFoundException;
+import edu.tum.ase.project.error.ResourceAlreadyExistsException;
+import edu.tum.ase.project.error.ResourceNotFoundException;
 import edu.tum.ase.project.model.Project;
 import edu.tum.ase.project.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
