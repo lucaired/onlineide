@@ -2,7 +2,7 @@ spring:
   application:
     name: darkmode-service
 server:
-  port: 8300
+  port: ${PORT:8300}
 eureka:
   client:
     serviceUrl:

@@ -2,7 +2,7 @@ spring:
   application:
     name: compiler-service
 server:
-  port: 8200
+  port: ${PORT:8200}
 eureka:
   client:
     serviceUrl:
