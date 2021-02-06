@@ -64,7 +64,7 @@
     <nz-layout class="inner-layout" *ngIf="selectedSourceFile$ | async as f">
       <div class="editor-wrapper">
         <ngx-monaco-editor
-          [options]="editorOptions$ | async"
+          [options]="editorOptions"
           [(ngModel)]="f.sourceCode"
           (ngModelChange)="setDirty(f)"
         >

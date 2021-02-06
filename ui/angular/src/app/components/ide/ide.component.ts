@@ -21,7 +21,7 @@ import {AuthService} from '@services/auth/auth.service';
   styleUrls: ['./ide.component.scss']
 })
 export class IdeComponent implements OnInit {
-  editorOptions$ = new BehaviorSubject({theme: 'vs-light', language: 'java'});
+  editorOptions = {theme: 'vs-light', language: 'java'};
 
   sourceFiles$: BehaviorSubject<ISourceFile[]> = new BehaviorSubject<ISourceFile[]>([]);
 
@@ -71,36 +71,22 @@ export class IdeComponent implements OnInit {
       this.sourceFiles$.next(sourceFiles);
     });
 
-    // Dark mode polling
+    // Poll theme
     setInterval(() => {
-      try {
-        this.darkModeService.getDarkMode().subscribe((res: IDarkMode) => {
-          if (res?.enabled) {
-            this.theme$.next(Theme.DARK);
-          } else {
-            this.theme$.next(Theme.LIGHT);
-          }
-        });
-      } catch (err) {
-
-      }
+      this.darkModeService.getDarkMode().subscribe((res: IDarkMode) => {
+        if (res?.enabled) {
+          this.editorOptions = {...this.editorOptions, theme: `vs-${Theme.DARK}`};
+        } else {
+          this.editorOptions = {...this.editorOptions, theme: `vs-${Theme.LIGHT}`};
+        }
+      });
     }, 3000);
 
-    // Toggle editor theme
-    this.theme$.subscribe(theme => {
-      if (theme) {
-        const options = this.editorOptions$.getValue();
-        options.theme = `vs-${theme}`;
-        this.editorOptions$.next(options);
-      }
-    });
 
     // Toggle editor language
     this.selectedSourceFile$.subscribe(file => {
       if (file) {
-        const options = this.editorOptions$.getValue();
-        options.language = getFileExtension(file.fileName);
-        this.editorOptions$.next(options);
+        this.editorOptions = {...this.editorOptions, language: getFileExtension(file.fileName)};
       }
     });
   }
