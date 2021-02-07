@@ -13,22 +13,9 @@ const DARK_MODE = environment.api.darkMode;
 })
 export class DarkModeService {
 
-  private _theme$: BehaviorSubject<Theme> = new BehaviorSubject<Theme>(Theme.LIGHT);
 
   constructor(private http: HttpClient) {
-    setInterval(() => {
-      this.getDarkMode().subscribe((res: IDarkMode) => {
-        if (res?.enabled) {
-          this._theme$.next(Theme.DARK);
-        } else {
-          this._theme$.next(Theme.LIGHT);
-        }
-      });
-    }, 3000);
-  }
 
-  get theme$(): BehaviorSubject<Theme> {
-    return this._theme$;
   }
 
 

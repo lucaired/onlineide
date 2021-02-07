@@ -8,7 +8,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
 import javax.sql.DataSource;
 
@@ -31,5 +33,10 @@ public class ProjectApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("DataSource = " + dataSource);
+    }
+
+    @Bean
+    ForwardedHeaderFilter forwardedHeaderFilter() {
+        return new ForwardedHeaderFilter();
     }
 }

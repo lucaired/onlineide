@@ -10,6 +10,9 @@ import {ProjectService} from '@services/project/project.service';
 import {CompilerService} from '@services/compiler/compiler.service';
 import {ICompilableFile} from '@models/compilable-file.model';
 import {NzMessageService} from 'ng-zorro-antd/message';
+import {Theme} from '@models/theme.model';
+import {IDarkMode} from '@models/dark-mode.model';
+import {AuthService} from '@services/auth/auth.service';
 
 
 @Component({
@@ -18,7 +21,7 @@ import {NzMessageService} from 'ng-zorro-antd/message';
   styleUrls: ['./ide.component.scss']
 })
 export class IdeComponent implements OnInit {
-  editorOptions$ = new BehaviorSubject({theme: 'vs-light', language: 'java'});
+  editorOptions = {theme: 'vs-light', language: 'java'};
 
   sourceFiles$: BehaviorSubject<ISourceFile[]> = new BehaviorSubject<ISourceFile[]>([]);
 
@@ -27,17 +30,24 @@ export class IdeComponent implements OnInit {
   currentCompilationResult$ = new BehaviorSubject<ICompilableFile>(null);
 
   newFileModalVisible = false;
+  addMemberModalVisible = false;
+
+  projectMemberToAdd: string;
 
   newSourceFile: ISourceFile = {fileName: '', sourceCode: ''};
   fileAlreadyExists = false;
   projectId$ = new BehaviorSubject<string>(null);
+
+  private theme$: BehaviorSubject<Theme> = new BehaviorSubject<Theme>(Theme.LIGHT);
 
   constructor(
     private activatedRoute: ActivatedRoute,
     public sourceFilesService: SourceFilesService,
     public compilerService: CompilerService,
     public darkModeService: DarkModeService,
-    private messageService: NzMessageService
+    public projectService: ProjectService,
+    private messageService: NzMessageService,
+    public authService: AuthService,
   ) {
   }
 
@@ -61,28 +71,43 @@ export class IdeComponent implements OnInit {
       this.sourceFiles$.next(sourceFiles);
     });
 
-    // Toggle editor theme
-    this.darkModeService.theme$.subscribe(theme => {
-      if (theme) {
-        const options = this.editorOptions$.getValue();
-        options.theme = `vs-${theme}`;
-        this.editorOptions$.next(options);
-      }
-    });
+    // Poll theme
+    setInterval(() => {
+      this.darkModeService.getDarkMode().subscribe((res: IDarkMode) => {
+        if (res?.enabled) {
+          this.editorOptions = {...this.editorOptions, theme: `vs-${Theme.DARK}`};
+        } else {
+          this.editorOptions = {...this.editorOptions, theme: `vs-${Theme.LIGHT}`};
+        }
+      });
+    }, 3000);
+
 
     // Toggle editor language
     this.selectedSourceFile$.subscribe(file => {
       if (file) {
-        const options = this.editorOptions$.getValue();
-        options.language = getFileExtension(file.fileName);
-        this.editorOptions$.next(options);
+        this.editorOptions = {...this.editorOptions, language: getFileExtension(file.fileName)};
       }
     });
   }
 
-  shareProject(): void {
-    console.log('TODO');
+  toggleShareModal(): void {
+    this.addMemberModalVisible = !this.addMemberModalVisible;
   }
+
+  handleCancelMemberModal(): void {
+    this.toggleShareModal();
+  }
+
+  handleOkMemberModal(): void {
+    this.projectService.addProjectMember(this.projectId$.getValue(), this.projectMemberToAdd);
+    this.toggleShareModal();
+  }
+
+  // removeMember(): void {
+  //   const projectId = this.projectId$.getValue();
+  //   this.projectService.removeProjectMember(projectId, this.projectMemberToEdit);
+  // }
 
   setDirty(sourceFile: ISourceFile): void {
     sourceFile.dirty = true;
@@ -100,23 +125,23 @@ export class IdeComponent implements OnInit {
     // `selectedSourceFile$` will contain the latest server state, we're checking the sourcecode against
     // the current file passed for compilation. If the contents don't match we ask the user to save the file
     // first
-      if (sourceFile.dirty) {
-        this.messageService.error('Save file first');
-      } else {
-        this.compilerService.compile(sourceFile).subscribe((res: ICompilableFile) => {
-          console.log(res);
-          if (res?.fileName) {
-            this.currentCompilationResult$.next(res);
-            if (res.compilable) {
-              this.messageService.success('Compilation successful 😍');
-            } else {
-              this.messageService.error('Compilation failed.');
-            }
+    if (sourceFile.dirty) {
+      this.messageService.error('Save file first');
+    } else {
+      this.compilerService.compile(sourceFile).subscribe((res: ICompilableFile) => {
+        console.log(res);
+        if (res?.fileName) {
+          this.currentCompilationResult$.next(res);
+          if (res.compilable) {
+            this.messageService.success('Compilation successful 😍');
           } else {
-            this.messageService.error('Unknown error :/');
+            this.messageService.error('Compilation failed.');
           }
-        });
-      }
+        } else {
+          this.messageService.error('Unknown error :/');
+        }
+      });
+    }
   }
 
   deleteSourceFile(sourceFileId: string): void {

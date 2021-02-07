@@ -6,6 +6,9 @@
       </button>
     </div>
     <div nz-col nzSpan="11">
+      <i nz-icon nzType="logout" class="logout-icon"
+         (click)="authService.logout()"
+      ></i>
       <div class="logo">Online IDE</div>
     </div>
     <div nz-col nzSpan="12" *ngIf="selectedSourceFile$ | async as f" class="actions-col">
@@ -46,14 +49,22 @@
           {{f.fileName}}
         </li>
       </ul>
-      <button nz-button nzType="default" (click)="shareProject()">Share Project</button>
+      <button nz-button nzType="default" (click)="toggleShareModal()">Share Project</button>
+      <div *ngIf="projectService.getProject(projectId$ | async) | async as p">
+        <h4>Members:</h4>
+        <ul class="members-list">
+          <li *ngFor="let m of p.memberIds">{{ m }}</li>
+        </ul>
+      </div>
+      <!--      <button nz-button nzType="default" (click)="removeMember()">Remove member</button>-->
+
     </nz-sider>
 
     <!-- Editor and Output -->
     <nz-layout class="inner-layout" *ngIf="selectedSourceFile$ | async as f">
       <div class="editor-wrapper">
         <ngx-monaco-editor
-          [options]="editorOptions$ | async"
+          [options]="editorOptions"
           [(ngModel)]="f.sourceCode"
           (ngModelChange)="setDirty(f)"
         >
@@ -73,6 +84,14 @@
       </ng-container>
     </nz-layout>
   </nz-layout>
+
+  <!-- Add project member modal -->
+  <nz-modal [(nzVisible)]="addMemberModalVisible" nzTitle="Rename" (nzOnCancel)="handleCancelMemberModal()"
+            (nzOnOk)="handleOkMemberModal()">
+    <ng-container *nzModalContent>
+      <input nz-input placeholder="GitLab username" [(ngModel)]="projectMemberToAdd"/>
+    </ng-container>
+  </nz-modal>
 
   <!-- New file modal -->
   <nz-modal [(nzVisible)]="newFileModalVisible" nzTitle="New file" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">

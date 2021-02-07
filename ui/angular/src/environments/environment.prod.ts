@@ -5,6 +5,10 @@
 export const environment = {
   production: true,
   api: {
+    user: '/user',
+    login: '/login',
+    authenticated: '/authenticated',
+    logout: '/logout',
     projects: '/api/projects',
     compiler: '/api/compile',
     darkMode: '/api/dark-mode'

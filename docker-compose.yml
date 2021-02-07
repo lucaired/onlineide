@@ -27,7 +27,7 @@ services:
     depends_on:
       - gateway
     ports:
-      - 8400:8400
+      - 8400-8404:8400
 
   dark-mode:
     image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/dark-mode:latest
@@ -37,7 +37,7 @@ services:
     depends_on:
       - gateway
     ports:
-      - 8300:8300
+      - 8300-8304:8300
 
   project:
     image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/project:latest
@@ -60,7 +60,7 @@ services:
       - gateway
       - postgres
     ports:
-      - 8100:8100
+      - 8100-8104:8100
 
   compiler:
     image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/compiler:latest
@@ -70,7 +70,7 @@ services:
     depends_on:
       - gateway
     ports:
-      - 8200:8200
+      - 8200-8204:8200
 
   postgres:
     image: library/postgres:13-alpine

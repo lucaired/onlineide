@@ -3,6 +3,7 @@ import {ProjectService} from '@services/project/project.service';
 import {IProject} from '@models/project.model';
 import {Router} from '@angular/router';
 import {DarkModeService} from '@services/dark-mode/dark-mode.service';
+import {AuthService} from '@services/auth/auth.service';
 
 @Component({
   selector: 'app-project',
@@ -17,6 +18,7 @@ export class ProjectComponent implements OnInit {
     public projectService: ProjectService,
     private router: Router,
     public darkModeService: DarkModeService,
+    public authService: AuthService,
   ) {
   }
 
@@ -49,9 +51,5 @@ export class ProjectComponent implements OnInit {
   handleCancel(): void {
     // do-nothing-democrats
     this.isVisible = false;
-  }
-
-  logout() {
-    this.router.navigate([`/login`]);
   }
 }

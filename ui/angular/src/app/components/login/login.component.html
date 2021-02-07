@@ -3,10 +3,13 @@
     <div class="inner-content">
       <h1>Welcome to the OnlineIDE</h1>
       <p>A project for Advanced Topics of Software Engineering (TUM)</p>
-      <button nz-button nzDanger="primary"
-              (click)="gotoProject()"
-      >
+      <button *ngIf="!(authService.isAuthenticated$ | async)" nz-button nzDanger="primary"
+              (click)="login()">
         Login with GitLab LRZ
+      </button>
+      <button *ngIf="authService.isAuthenticated$ | async" nz-button nzDanger="primary"
+              (click)="authService.logout()">
+        Logout
       </button>
     </div>
   </nz-layout>

@@ -4,12 +4,9 @@ build-compiler:
     MICROSERVICE_DIR: "compiler"
 
 test-compiler:
+  image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/compiler-runner:latest
   stage: test
   # Install gcc in order to execute the integration and E2E tests
-  # TODO: This can probably be removed later if we use our own Docker images with pre-installed packages
-  before_script:
-    - apt-get update
-    - apt-get --yes install build-essential
   script:
     - cd compiler
     - mvn $MAVEN_CLI_OPTS test

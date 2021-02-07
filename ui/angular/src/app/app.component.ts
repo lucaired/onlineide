@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {DarkModeService} from '@services/dark-mode/dark-mode.service';
+import {AuthService} from '@services/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +11,7 @@ export class AppComponent implements OnInit {
 
 
   constructor(
-    public darkModeService: DarkModeService,
+    private authService: AuthService
   ) {
 
   }

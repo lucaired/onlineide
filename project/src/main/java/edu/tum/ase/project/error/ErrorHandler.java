@@ -2,6 +2,7 @@ package edu.tum.ase.project.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +31,12 @@ public class ErrorHandler {
             errors.put(fieldName, errorMessage);
         });
         ErrorResponse res = new ErrorResponse(HttpStatus.BAD_REQUEST, message, errors);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
+        ErrorResponse res = new ErrorResponse(HttpStatus.FORBIDDEN, "Access to this resource is denied");
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
