@@ -74,10 +74,10 @@ export class IdeComponent implements OnInit {
     // Poll theme
     setInterval(() => {
       this.darkModeService.getDarkMode().subscribe((res: IDarkMode) => {
-        if (res?.enabled) {
-          this.editorOptions = {...this.editorOptions, theme: `vs-${Theme.DARK}`};
-        } else {
-          this.editorOptions = {...this.editorOptions, theme: `vs-${Theme.LIGHT}`};
+        const newTheme = res?.enabled ? `vs-${Theme.DARK}` : `vs-${Theme.LIGHT}`;
+        if (this.editorOptions.theme !== newTheme) {
+          this.editorOptions = {...this.editorOptions, theme: newTheme};
+
         }
       });
     }, 3000);
