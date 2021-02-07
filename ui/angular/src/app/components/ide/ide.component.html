@@ -65,11 +65,10 @@
     <!-- Editor and Output -->
     <nz-layout class="inner-layout" *ngIf="selectedSourceFile$ | async as f">
       <div class="editor-wrapper">
-        <ngx-monaco-editor
-          [options]="editorOptions"
-          [(ngModel)]="f.sourceCode"
-          (ngModelChange)="setDirty(f)"
-        >
+        <ngx-monaco-editor class="my-code-editor"
+                           [options]="editorOptions"
+                           [(ngModel)]="f.sourceCode"
+                           (ngModelChange)="setDirty(f)">
         </ngx-monaco-editor>
       </div>
       <ng-container *ngIf="currentCompilationResult$ | async as compilationResult">

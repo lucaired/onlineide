@@ -38,8 +38,6 @@ export class IdeComponent implements OnInit {
   fileAlreadyExists = false;
   projectId$ = new BehaviorSubject<string>(null);
 
-  private theme$: BehaviorSubject<Theme> = new BehaviorSubject<Theme>(Theme.LIGHT);
-
   constructor(
     private activatedRoute: ActivatedRoute,
     public sourceFilesService: SourceFilesService,
@@ -52,6 +50,7 @@ export class IdeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     this.activatedRoute.paramMap.pipe(
       mergeMap(paramMap => {
         const id: string = paramMap.get('id');

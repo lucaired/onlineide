@@ -13,6 +13,13 @@ nz-header {
   }
 }
 
+.my-code-editor {
+  min-height: 50vh;
+  .editor-container {
+    height: calc(100vh - 100px);
+  }
+}
+
 .members-list {
   list-style: none;
   padding-left: 0;
@@ -20,15 +27,6 @@ nz-header {
 
 .logout-icon {
   color: white;
-}
-
-.editor-wrapper {
-  min-height: 50vh;
-}
-
-ngx-monaco-editor {
-  width: 100%;
-  height: 100%;
 }
 
 
