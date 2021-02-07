@@ -7,10 +7,16 @@
               (click)="login()">
         Login with GitLab LRZ
       </button>
-      <button *ngIf="authService.isAuthenticated$ | async" nz-button nzDanger="primary"
-              (click)="authService.logout()">
-        Logout
-      </button>
+      <ng-container *ngIf="authService.isAuthenticated$ | async">
+        <button nz-button nzDanger="primary"
+                (click)="authService.logout()">
+          Logout
+        </button>
+        <button nz-button nzDanger="primary"
+                (click)="toProjects()">
+          To Projects
+        </button>
+      </ng-container>
     </div>
   </nz-layout>
 </nz-layout>
