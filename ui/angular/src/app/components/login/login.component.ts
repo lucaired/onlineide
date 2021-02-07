@@ -23,4 +23,8 @@ export class LoginComponent implements OnInit {
   login() {
     window.location.href = environment.api.login;
   }
+
+  toProjects() {
+    this.router.navigateByUrl('/projects');
+  }
 }

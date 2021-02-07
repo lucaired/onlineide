@@ -5,13 +5,15 @@
         <i nz-icon nzType="left"></i>
       </button>
     </div>
-    <div nz-col nzSpan="11">
+    <div nz-col nzSpan="1">
       <i nz-icon nzType="logout" class="logout-icon"
          (click)="authService.logout()"
       ></i>
+    </div>
+    <div nz-col nzSpan="12">
       <div class="logo">Online IDE</div>
     </div>
-    <div nz-col nzSpan="12" *ngIf="selectedSourceFile$ | async as f" class="actions-col">
+    <div nz-col nzSpan="10" *ngIf="selectedSourceFile$ | async as f" class="actions-col">
       <button
         nz-button
         nzType="default"
@@ -63,11 +65,10 @@
     <!-- Editor and Output -->
     <nz-layout class="inner-layout" *ngIf="selectedSourceFile$ | async as f">
       <div class="editor-wrapper">
-        <ngx-monaco-editor
-          [options]="editorOptions"
-          [(ngModel)]="f.sourceCode"
-          (ngModelChange)="setDirty(f)"
-        >
+        <ngx-monaco-editor class="my-code-editor"
+                           [options]="editorOptions"
+                           [(ngModel)]="f.sourceCode"
+                           (ngModelChange)="setDirty(f)">
         </ngx-monaco-editor>
       </div>
       <ng-container *ngIf="currentCompilationResult$ | async as compilationResult">

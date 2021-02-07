@@ -98,10 +98,6 @@ public class ProjectController {
             throw new ResourceNotFoundException(Project.class, id);
         }
 
-        if (projectService.findByName(newProject.getName()).isPresent()) {
-            throw new ResourceAlreadyExistsException(Project.class, "name", newProject.getName());
-        }
-
         // If the Java object has the same id, Hibernate will recognize that an update and no creation should take place
         newProject.setId(id);
 

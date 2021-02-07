@@ -35,7 +35,7 @@ export class AuthService {
   public fetchAuthenticated() {
     this.http.get(environment.api.authenticated, {headers: getAuthHeaders()}).subscribe((res: boolean) => {
       this._isAuthenticated$.next(res);
-      console.log(`Is authenticated: ${res}`);
+      // console.log(`Is authenticated: ${res}`);
       if (res) {
         this.fetchUser();
       }
