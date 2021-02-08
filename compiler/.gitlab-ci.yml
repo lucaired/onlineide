@@ -1,0 +1,21 @@
+build-compiler:
+  extends: .template-build
+  variables:
+    MICROSERVICE_DIR: "compiler"
+
+test-compiler:
+  image: gitlab.lrz.de:5005/ase20-group5-1/onlineide/compiler-runner:latest
+  stage: test
+  # Install gcc in order to execute the integration and E2E tests
+  script:
+    - cd compiler
+    - mvn $MAVEN_CLI_OPTS test
+  needs:
+    - build-compiler
+
+package-compiler:
+  extends: .template-package
+  variables:
+    MICROSERVICE_DIR: "compiler"
+  needs:
+    - test-compiler

@@ -1,0 +1,63 @@
+nz-header {
+  background: linear-gradient(90deg, hsla(217, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);
+
+  .logo {
+    font-size: 20px;
+    // text-transform: uppercase;
+    font-weight: 500;
+    color: white
+  }
+
+  .back-button {
+    color: white;
+  }
+}
+
+.my-code-editor {
+  min-height: 50vh;
+  .editor-container {
+    height: calc(100vh - 100px);
+  }
+}
+
+.members-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.logout-icon {
+  color: white;
+}
+
+
+nz-sider {
+  text-align: center;
+
+  button {
+    margin: 2rem 0;
+  }
+}
+
+
+div.actions-col {
+  text-align: right;
+
+  button {
+    margin: 0 0.1rem;
+  }
+}
+
+
+.inner-layout {
+  margin: 0;
+  padding: 0;
+}
+
+nz-tabset {
+  margin: 1rem;
+}
+
+.errors-tab {
+  font-family: monospace;
+  color: red;
+}

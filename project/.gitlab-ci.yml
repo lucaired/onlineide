@@ -1,0 +1,13 @@
+build-project:
+  extends: .template-build
+  variables:
+    MICROSERVICE_DIR: "project"
+
+# There is currently no test job for this microservice
+
+package-project:
+  extends: .template-package
+  variables:
+    MICROSERVICE_DIR: "project"
+  needs:
+    - build-project

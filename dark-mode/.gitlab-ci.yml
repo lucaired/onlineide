@@ -1,0 +1,13 @@
+build-dark-mode:
+  extends: .template-build
+  variables:
+    MICROSERVICE_DIR: "dark-mode"
+
+# There is currently no test job for this microservice
+
+package-dark-mode:
+  extends: .template-package
+  variables:
+    MICROSERVICE_DIR: "dark-mode"
+  needs:
+    - build-dark-mode

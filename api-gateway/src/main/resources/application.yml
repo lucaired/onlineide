@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: gateway-service
+server:
+  port: ${PORT:80}
+security:
+  oauth2:
+    client:
+      clientId: ${OAUTH_CLIENT_ID}
+      clientSecret: ${OAUTH_CLIENT_SECRET}
+      accessTokenUri: https://gitlab.lrz.de/oauth/token
+      userAuthorizationUri: https://gitlab.lrz.de/oauth/authorize
+      scope:
+        - read_user
+        - api
+    resource:
+      userInfoUri: https://gitlab.lrz.de/api/v4/user
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
+zuul:
+  ignored-services: "*" # Avoid having a service automatically added into Zuul routes (default behaviour)
+  routes:
+    compiler-service:
+      path: "/api/compile/**"
+      serviceId: compiler-service
+      strip-prefix: false
+    darkmode-service:
+      path: "/api/dark-mode/**"
+      serviceId: darkmode-service
+      strip-prefix: false
+    project-service:
+      path: "/api/projects/**"
+      serviceId: project-service
+      strip-prefix: false
+      # Exclude the Authentication header from the sensitive headers (i.e. headers that are not forwarded).
+      # Therefore, this header will be available in downstream services.
+      sensitiveHeaders: Cookie,Set-Cookie
+    ui-service:
+      path: "/ui/**"
+      serviceId: ui-service
+      strip-prefix: false
+proxy:
+  auth:
+    routes:
+      project-service: oauth2
+# Proposed settings from the exercise sheet
+zuul.host.socket-timeout-millis: 20000
+zuul.host.connect-timeout-millis: 20000
+ribbon.ConnectTimeout: 10000
+ribbon.ReadTimeout: 10000

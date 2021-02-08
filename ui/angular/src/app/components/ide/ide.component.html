@@ -1,0 +1,104 @@
+<nz-header>
+  <div nz-row>
+    <div nz-col nzSpan="1">
+      <button nz-button nzType="text" class="back-button" routerLink="/projects">
+        <i nz-icon nzType="left"></i>
+      </button>
+    </div>
+    <div nz-col nzSpan="1">
+      <i nz-icon nzType="logout" class="logout-icon"
+         (click)="authService.logout()"
+      ></i>
+    </div>
+    <div nz-col nzSpan="12">
+      <div class="logo">Online IDE</div>
+    </div>
+    <div nz-col nzSpan="10" *ngIf="selectedSourceFile$ | async as f" class="actions-col">
+      <button
+        nz-button
+        nzType="default"
+        (click)="saveSourceFile(f)"
+      >
+        Save
+      </button>
+      <button
+        nz-button
+        nzType="primary"
+        (click)="compileSourceFile(f)"
+      >
+        Compile
+      </button>
+      <button
+        nz-button
+        nzType="danger"
+        (click)="deleteSourceFile(f.id)"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</nz-header>
+
+<nz-layout class="wrapper-layout">
+  <nz-layout>
+    <!-- Sidebar -->
+    <nz-sider nzWidth="200px" nzTheme="light">
+      <button nz-button nzType="default" (click)="openNewFileModal()">New File</button>
+
+      <ul *ngIf="sourceFiles$ | async as sourceFiles" nz-menu nzMode="inline" class="sider-menu">
+        <li *ngFor="let f of sourceFiles" [nzSelected]="isFileSelected(f) | async"
+            nz-menu-item (click)="toggleSourceFile(f)">
+          {{f.fileName}}
+        </li>
+      </ul>
+      <button nz-button nzType="default" (click)="toggleShareModal()">Share Project</button>
+      <div *ngIf="projectService.getProject(projectId$ | async) | async as p">
+        <h4>Members:</h4>
+        <ul class="members-list">
+          <li *ngFor="let m of p.memberIds">{{ m }}</li>
+        </ul>
+      </div>
+      <!--      <button nz-button nzType="default" (click)="removeMember()">Remove member</button>-->
+
+    </nz-sider>
+
+    <!-- Editor and Output -->
+    <nz-layout class="inner-layout" *ngIf="selectedSourceFile$ | async as f">
+      <div class="editor-wrapper">
+        <ngx-monaco-editor class="my-code-editor"
+                           [options]="editorOptions"
+                           [(ngModel)]="f.sourceCode"
+                           (ngModelChange)="setDirty(f)">
+        </ngx-monaco-editor>
+      </div>
+      <ng-container *ngIf="currentCompilationResult$ | async as compilationResult">
+        <nz-tabset [nzSelectedIndex]="compilationResult?.stderr? 1 : 0">
+          <nz-tab nzTitle="Output">
+            {{compilationResult.stdout}}
+          </nz-tab>
+          <nz-tab nzTitle="Errors" *ngIf="compilationResult.stderr?.length > 0">
+            <div class="errors-tab">
+              {{compilationResult.stderr}}
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </ng-container>
+    </nz-layout>
+  </nz-layout>
+
+  <!-- Add project member modal -->
+  <nz-modal [(nzVisible)]="addMemberModalVisible" nzTitle="Rename" (nzOnCancel)="handleCancelMemberModal()"
+            (nzOnOk)="handleOkMemberModal()">
+    <ng-container *nzModalContent>
+      <input nz-input placeholder="GitLab username" [(ngModel)]="projectMemberToAdd"/>
+    </ng-container>
+  </nz-modal>
+
+  <!-- New file modal -->
+  <nz-modal [(nzVisible)]="newFileModalVisible" nzTitle="New file" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+      <input nz-input placeholder="File name" [(ngModel)]="newSourceFile.fileName"/>
+      <p class="error-message" *ngIf="fileAlreadyExists">File with this name already exists.</p>
+    </ng-container>
+  </nz-modal>
+</nz-layout>

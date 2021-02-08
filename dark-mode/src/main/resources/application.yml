@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: darkmode-service
+server:
+  port: ${PORT:8300}
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
