@@ -2,8 +2,6 @@
 
 This is the repository for the project "OnlineIDE" in the course "Advanced Topics of Software Engineering".
 
-Our software is continuously deployed and available at http://35.242.243.82.
-
 ## Deployment
 
 The application can be easily deployed once access to the GitLab repository is granted.
