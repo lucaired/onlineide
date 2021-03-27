@@ -3,9 +3,9 @@
 This is the repository for the project "OnlineIDE" in the course "Advanced Topics of Software Engineering". It was implemented by:
 - [Adrian Mitter](https://www.linkedin.com/in/adrian-mitter-052157195/)
 - [Luca A. Müller](https://github.com/lucaired)
-- [Marc Bede]()
+- [Marc Bede](-)
 - [Matthias Unterfrauner](https://www.linkedin.com/in/matthiasunt/)
-- [Wenliang Peng]()
+- [Wenliang Peng](https://github.com/bpwl0121)
 
 ## Deployment
 
