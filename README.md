@@ -1,6 +1,7 @@
 # Online IDE
 
-This is the repository for the project "OnlineIDE" in the course "Advanced Topics of Software Engineering". It was implemented by:
+This is the repository for the project "OnlineIDE" in the course "Advanced Topics of Software Engineering". 
+Created by:
 - [Adrian Mitter](https://www.linkedin.com/in/adrian-mitter-052157195/)
 - [Luca A. Müller](https://github.com/lucaired)
 - Marc Bede
